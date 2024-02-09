@@ -7,6 +7,7 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,9 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import static java.util.stream.Collectors.toList;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -29,7 +34,7 @@ public class Main extends Application {
     private final GameData gameData = new GameData();
     private final World world = new World();
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
-    
+
 
     public static void main(String[] args) {
         launch(Main.class);
@@ -53,6 +58,9 @@ public class Main extends Application {
             if (event.getCode().equals(KeyCode.UP)) {
                 gameData.getKeys().setKey(GameKeys.UP, true);
             }
+            if (event.getCode().equals(KeyCode.SPACE)) {
+                gameData.getKeys().setKey(GameKeys.SPACE, true);
+            }
         });
         scene.setOnKeyReleased(event -> {
             if (event.getCode().equals(KeyCode.LEFT)) {
@@ -64,7 +72,9 @@ public class Main extends Application {
             if (event.getCode().equals(KeyCode.UP)) {
                 gameData.getKeys().setKey(GameKeys.UP, false);
             }
-
+            if (event.getCode().equals(KeyCode.SPACE)) {
+                gameData.getKeys().setKey(GameKeys.SPACE, false);
+            }
         });
 
         // Lookup all Game Plugins using ServiceLoader
@@ -77,7 +87,7 @@ public class Main extends Application {
             gameWindow.getChildren().add(polygon);
         }
 
-        render();
+        render(gameWindow);
 
         window.setScene(scene);
         window.setTitle("ASTEROIDS");
@@ -85,13 +95,13 @@ public class Main extends Application {
 
     }
 
-    private void render() {
+    private void render(Pane gameWindow) {
         new AnimationTimer() {
             private long then = 0;
 
             @Override
             public void handle(long now) {
-                update();
+                update(gameWindow);
                 draw();
                 gameData.getKeys().update();
             }
@@ -99,11 +109,30 @@ public class Main extends Application {
         }.start();
     }
 
-    private void update() {
+    private void update(Pane gameWindow) {
 
         // Update
         for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
             entityProcessorService.process(gameData, world);
+
+            // Remove deleted entities from the game window
+            for (Entity entity : polygons.keySet()) {
+                if (!world.getEntities().contains(entity)) {
+                    Polygon p = polygons.get(entity);
+                    if (gameWindow.getChildren().contains(p)) {
+                        gameWindow.getChildren().remove(p);
+                    }
+                }
+            }
+
+            // Add new entities to the game window
+            for (Entity entity : world.getEntities()) {
+                if (!polygons.containsKey(entity)) {
+                    Polygon polygon = new Polygon(entity.getPolygonCoordinates());
+                    polygons.put(entity, polygon);
+                    gameWindow.getChildren().add(polygon);
+                }
+            }
         }
 //        for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
 //            postEntityProcessorService.process(gameData, world);
