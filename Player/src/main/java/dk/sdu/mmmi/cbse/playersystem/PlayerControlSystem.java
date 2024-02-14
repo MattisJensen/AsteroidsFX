@@ -14,16 +14,19 @@ import static java.util.stream.Collectors.toList;
 
 
 public class PlayerControlSystem implements IEntityProcessingService {
+    private static long lastShotExecutionTime = 0;
+    private int shotBlockTime = 400;
 
     @Override
     public void process(GameData gameData, World world) {
-
         for (Entity player : world.getEntities(Player.class)) {
-            if (gameData.getKeys().isDown(GameKeys.LEFT)) {
-                player.setRotation(player.getRotation() - 5);
-            }
-            if (gameData.getKeys().isDown(GameKeys.RIGHT)) {
-                player.setRotation(player.getRotation() + 5);
+            if (gameData.getKeys().isDown(GameKeys.LEFT)) player.setRotation(player.getRotation() - 5);
+            if (gameData.getKeys().isDown(GameKeys.RIGHT)) player.setRotation(player.getRotation() + 5);
+
+            long currentSystemTime = System.currentTimeMillis();
+            if (currentSystemTime - lastShotExecutionTime > shotBlockTime && gameData.getKeys().isDown(GameKeys.SPACE)) {
+                lastShotExecutionTime = currentSystemTime;
+                world.addEntity(getBulletSPIs().stream().findFirst().get().createBullet(player, gameData));
             }
 
             double changeX = Math.cos(Math.toRadians(player.getRotation()));
@@ -37,21 +40,10 @@ public class PlayerControlSystem implements IEntityProcessingService {
                 player.setY(player.getY() + changeY);
             }
 
-            if (player.getX() < 0) {
-                player.setX(1);
-            }
-
-            if (player.getX() > gameData.getDisplayWidth()) {
-                player.setX(gameData.getDisplayWidth() - 1);
-            }
-
-            if (player.getY() < 0) {
-                player.setY(1);
-            }
-
-            if (player.getY() > gameData.getDisplayHeight()) {
-                player.setY(gameData.getDisplayHeight() - 1);
-            }
+            if (player.getX() < 0) player.setX(1);
+            if (player.getX() > gameData.getDisplayWidth()) player.setX(gameData.getDisplayWidth() - 1);
+            if (player.getY() < 0) player.setY(1);
+            if (player.getY() > gameData.getDisplayHeight()) player.setY(gameData.getDisplayHeight() - 1);
         }
     }
 
