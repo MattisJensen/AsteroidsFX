@@ -34,7 +34,7 @@ public class Main extends Application {
     private final GameData gameData = new GameData();
     private final World world = new World();
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
-
+    private final Pane gameWindow = new Pane();
 
     public static void main(String[] args) {
         launch(Main.class);
@@ -43,7 +43,6 @@ public class Main extends Application {
     @Override
     public void start(Stage window) throws Exception {
         Text text = new Text(10, 20, "Destroyed asteroids: 0");
-        Pane gameWindow = new Pane();
         gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
         gameWindow.getChildren().add(text);
 
@@ -87,7 +86,7 @@ public class Main extends Application {
             gameWindow.getChildren().add(polygon);
         }
 
-        render(gameWindow);
+        render();
 
         window.setScene(scene);
         window.setTitle("ASTEROIDS");
@@ -95,13 +94,13 @@ public class Main extends Application {
 
     }
 
-    private void render(Pane gameWindow) {
+    private void render() {
         new AnimationTimer() {
             private long then = 0;
 
             @Override
             public void handle(long now) {
-                update(gameWindow);
+                update();
                 draw();
                 gameData.getKeys().update();
             }
@@ -109,7 +108,7 @@ public class Main extends Application {
         }.start();
     }
 
-    private void update(Pane gameWindow) {
+    private void update() {
         // Update
         for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
             entityProcessorService.process(gameData, world);
@@ -145,6 +144,7 @@ public class Main extends Application {
             polygon.setTranslateY(entity.getY());
             polygon.setRotate(entity.getRotation());
         }
+
     }
 
     private Collection<? extends IGamePluginService> getPluginServices() {
