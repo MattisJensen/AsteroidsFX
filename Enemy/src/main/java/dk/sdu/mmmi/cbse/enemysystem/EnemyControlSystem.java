@@ -1,4 +1,4 @@
-package dk.sdu.mmmi.cbse.playersystem;
+package dk.sdu.mmmi.cbse.enemysystem;
 
 import dk.sdu.mmmi.cbse.common.bullet.BulletSPI;
 import dk.sdu.mmmi.cbse.common.data.Entity;
@@ -8,38 +8,42 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 
 import java.util.Collection;
+import java.util.Random;
 import java.util.ServiceLoader;
 
 import static java.util.stream.Collectors.toList;
 
-
-public class PlayerControlSystem implements IEntityProcessingService {
+public class EnemyControlSystem implements IEntityProcessingService {
     private GameData gameData;
     private World world;
     private static long lastShotExecutionTime = 0;
-    private final int SHOT_COOLDOWN = 400;
+    private int shotBlockTime = 400;
+    private int randomInt = 1;
 
     @Override
     public void process(GameData gameData, World world) {
         this.gameData = gameData;
         this.world = world;
 
-        for (Entity player : world.getEntities(Player.class)) {
-            setShape(player);
-            setOutOfWindowShip(player);
+        Random random = new Random();
+        randomInt = random.nextInt(1, 20);
+
+        for (Entity enemy : world.getEntities(Enemy.class)) {
+            setShape(enemy);
+            setOutOfWindowShip(enemy);
         }
     }
 
     private void setShape(Entity entity) {
-        if (gameData.getKeys().isDown(GameKeys.LEFT)) {
+        if (randomInt <= 2) {
             entity.setRotation(entity.getRotation() - 5);
         }
-        if (gameData.getKeys().isDown(GameKeys.RIGHT)) {
+        if (randomInt <= 4 && randomInt > 2) {
             entity.setRotation(entity.getRotation() + 5);
         }
 
         long currentSystemTime = System.currentTimeMillis();
-        if (currentSystemTime - lastShotExecutionTime > SHOT_COOLDOWN && gameData.getKeys().isDown(GameKeys.SPACE)) {
+        if (currentSystemTime - lastShotExecutionTime > shotBlockTime && randomInt > 18) {
             lastShotExecutionTime = currentSystemTime;
             world.addEntity(getBulletSPIs().stream().findFirst().get().createBullet(entity, gameData));
         }
@@ -47,7 +51,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
         double changeX = Math.cos(Math.toRadians(entity.getRotation()));
         double changeY = Math.sin(Math.toRadians(entity.getRotation()));
 
-        if (gameData.getKeys().isDown(GameKeys.UP)) {
+        if (randomInt > 14) {
             entity.setX(entity.getX() + (changeX * 2));
             entity.setY(entity.getY() + (changeY * 2));
         } else {
@@ -57,16 +61,28 @@ public class PlayerControlSystem implements IEntityProcessingService {
     }
 
     private void setOutOfWindowShip(Entity entity) {
-        if (entity.getX() < 0) {
-            entity.setX(1);
-        } else if (entity.getX() > gameData.getDisplayWidth()) {
-            entity.setX(gameData.getDisplayWidth() - 1);
+        if (entity.getX() < 30) {
+            entity.setRotation(entity.getRotation() - 4);
+        } else if (entity.getX() > gameData.getDisplayWidth() - 30) {
+            entity.setRotation(entity.getRotation() - 4);
         }
 
-        if (entity.getY() < 0) {
-            entity.setY(1);
-        } else if (entity.getY() > gameData.getDisplayHeight()) {
-            entity.setY(gameData.getDisplayHeight() - 1);
+        if (entity.getY() < 30) {
+            entity.setRotation(entity.getRotation() - 4);
+        } else if (entity.getY() > gameData.getDisplayHeight() - 30) {
+            entity.setRotation(entity.getRotation() - 4);
+        }
+
+        if (entity.getX() < 30) {
+            entity.setX(30);
+        } else if (entity.getX() > gameData.getDisplayWidth() - 30) {
+            entity.setX(gameData.getDisplayWidth() - 30);
+        }
+
+        if (entity.getY() < 30) {
+            entity.setY(30);
+        } else if (entity.getY() > gameData.getDisplayHeight() - 30) {
+            entity.setY(gameData.getDisplayHeight() - 30);
         }
     }
 
