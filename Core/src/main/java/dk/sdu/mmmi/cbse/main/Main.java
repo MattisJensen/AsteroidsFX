@@ -61,6 +61,7 @@ public class Main extends Application {
                 gameData.getKeys().setKey(GameKeys.SPACE, true);
             }
         });
+
         scene.setOnKeyReleased(event -> {
             if (event.getCode().equals(KeyCode.LEFT)) {
                 gameData.getKeys().setKey(GameKeys.LEFT, false);
@@ -80,6 +81,7 @@ public class Main extends Application {
         for (IGamePluginService iGamePlugin : getPluginServices()) {
             iGamePlugin.start(gameData, world);
         }
+
         for (Entity entity : world.getEntities()) {
             Polygon polygon = new Polygon(entity.getPolygonCoordinates());
             polygons.put(entity, polygon);
@@ -91,7 +93,6 @@ public class Main extends Application {
         window.setScene(scene);
         window.setTitle("ASTEROIDS");
         window.show();
-
     }
 
     private void render() {
@@ -104,7 +105,6 @@ public class Main extends Application {
                 draw();
                 gameData.getKeys().update();
             }
-
         }.start();
     }
 
@@ -144,7 +144,6 @@ public class Main extends Application {
             polygon.setTranslateY(entity.getY());
             polygon.setRotate(entity.getRotation());
         }
-
     }
 
     private Collection<? extends IGamePluginService> getPluginServices() {

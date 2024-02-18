@@ -4,13 +4,14 @@ import dk.sdu.mmmi.cbse.common.bullet.Bullet;
 import dk.sdu.mmmi.cbse.common.bullet.BulletSPI;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
+import dk.sdu.mmmi.cbse.common.data.GameKeys;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 
 public class BulletControlSystem implements IEntityProcessingService, BulletSPI {
 
-    GameData gameData;
-    World world;
+    private GameData gameData;
+    private World world;
 
     @Override
     public void process(GameData gameData, World world) {
@@ -21,22 +22,42 @@ public class BulletControlSystem implements IEntityProcessingService, BulletSPI 
         }
     }
 
+    /**
+     * Creates a bullet entity at the front side of the given entity.
+     *
+     * @param e The entity which creates the bullet.
+     * @param gameData The game data.
+     * @return The created bullet entity.
+     */
     @Override
     public Entity createBullet(Entity e, GameData gameData) {
         Entity bullet = new Bullet();
-        bullet.setPolygonCoordinates(-1, -1, 1, -1, 1, 1, -1, 1);
-        bullet.setX(e.getX());
-        bullet.setY(e.getY());
+        bullet.setPolygonCoordinates(0, 0, 3, 0, 3, 3, 0, 3);
+
+        double distanceFromCenter = (e.getHeight() / 2) + 2;
+
+        // Calculate the center of the entity
+        double centerX = e.getX() + e.getWidth() / 2;
+        double centerY = e.getY() + e.getHeight() / 2;
+
+        // Calculate the position of the bullet
+        double rotationInRadians = Math.toRadians(e.getRotation());
+        double coordX = (centerX + Math.sin(rotationInRadians) * distanceFromCenter);
+        double coordY = (centerY - Math.cos(rotationInRadians) * distanceFromCenter);
+
+        // Set the position and rotation of the bullet
+        bullet.setX(coordX);
+        bullet.setY(coordY);
         bullet.setRotation(e.getRotation());
+
         return bullet;
     }
 
     private void setShape(Entity entity) {
-        double changeX = Math.cos(Math.toRadians(entity.getRotation()));
-        double changeY = Math.sin(Math.toRadians(entity.getRotation()));
+        double changeX = Math.sin(Math.toRadians(entity.getRotation()));
+        double changeY = Math.cos(Math.toRadians(entity.getRotation()));
         entity.setX(entity.getX() + changeX * 3.5);
-        entity.setY(entity.getY() + changeY * 3.5);
-
+        entity.setY(entity.getY() - changeY * 3.5);
         removeOutOfWindowBullet(entity);
     }
 

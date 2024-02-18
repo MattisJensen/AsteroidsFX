@@ -17,7 +17,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
     private GameData gameData;
     private World world;
     private static long lastShotExecutionTime = 0;
-    private final int SHOT_COOLDOWN = 400;
+    private final int SHOT_COOLDOWN = 300;
 
     @Override
     public void process(GameData gameData, World world) {
@@ -34,6 +34,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
         if (gameData.getKeys().isDown(GameKeys.LEFT)) {
             entity.setRotation(entity.getRotation() - 5);
         }
+
         if (gameData.getKeys().isDown(GameKeys.RIGHT)) {
             entity.setRotation(entity.getRotation() + 5);
         }
@@ -44,15 +45,15 @@ public class PlayerControlSystem implements IEntityProcessingService {
             world.addEntity(getBulletSPIs().stream().findFirst().get().createBullet(entity, gameData));
         }
 
-        double changeX = Math.cos(Math.toRadians(entity.getRotation()));
-        double changeY = Math.sin(Math.toRadians(entity.getRotation()));
+        double changeX = Math.sin(Math.toRadians(entity.getRotation()));
+        double changeY = Math.cos(Math.toRadians(entity.getRotation()));
 
         if (gameData.getKeys().isDown(GameKeys.UP)) {
             entity.setX(entity.getX() + (changeX * 2));
-            entity.setY(entity.getY() + (changeY * 2));
+            entity.setY(entity.getY() - (changeY * 2));
         } else {
             entity.setX(entity.getX() + changeX);
-            entity.setY(entity.getY() + changeY);
+            entity.setY(entity.getY() - changeY);
         }
     }
 

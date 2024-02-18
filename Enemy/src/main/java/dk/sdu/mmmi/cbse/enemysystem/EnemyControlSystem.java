@@ -48,40 +48,32 @@ public class EnemyControlSystem implements IEntityProcessingService {
             world.addEntity(getBulletSPIs().stream().findFirst().get().createBullet(entity, gameData));
         }
 
-        double changeX = Math.cos(Math.toRadians(entity.getRotation()));
-        double changeY = Math.sin(Math.toRadians(entity.getRotation()));
+        double changeX = Math.sin(Math.toRadians(entity.getRotation()));
+        double changeY = Math.cos(Math.toRadians(entity.getRotation()));
 
         if (randomInt > 14) {
             entity.setX(entity.getX() + (changeX * 2));
-            entity.setY(entity.getY() + (changeY * 2));
+            entity.setY(entity.getY() - (changeY * 2));
         } else {
             entity.setX(entity.getX() + changeX);
-            entity.setY(entity.getY() + changeY);
+            entity.setY(entity.getY() - changeY);
         }
     }
 
     private void setOutOfWindowShip(Entity entity) {
         if (entity.getX() < 30) {
             entity.setRotation(entity.getRotation() - 4);
-        } else if (entity.getX() > gameData.getDisplayWidth() - 30) {
-            entity.setRotation(entity.getRotation() - 4);
-        }
-
-        if (entity.getY() < 30) {
-            entity.setRotation(entity.getRotation() - 4);
-        } else if (entity.getY() > gameData.getDisplayHeight() - 30) {
-            entity.setRotation(entity.getRotation() - 4);
-        }
-
-        if (entity.getX() < 30) {
             entity.setX(30);
         } else if (entity.getX() > gameData.getDisplayWidth() - 30) {
+            entity.setRotation(entity.getRotation() - 4);
             entity.setX(gameData.getDisplayWidth() - 30);
         }
 
         if (entity.getY() < 30) {
+            entity.setRotation(entity.getRotation() - 4);
             entity.setY(30);
         } else if (entity.getY() > gameData.getDisplayHeight() - 30) {
+            entity.setRotation(entity.getRotation() - 4);
             entity.setY(gameData.getDisplayHeight() - 30);
         }
     }

@@ -6,36 +6,54 @@ import java.util.UUID;
 public class Entity implements Serializable {
 
     private final UUID ID = UUID.randomUUID();
-    
+
     private double[] polygonCoordinates;
     private double x;
     private double y;
     private double rotation;
-            
+    private double width = 0;
+    private double height = 0;
 
     public String getID() {
         return ID.toString();
     }
 
-
-    public void setPolygonCoordinates(double... coordinates ) {
+    public void setPolygonCoordinates(double... coordinates) {
         this.polygonCoordinates = coordinates;
+
+        if (width == 0) {
+            double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
+            for (int i = 0; i < polygonCoordinates.length; i += 2) {
+                double x = polygonCoordinates[i];
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+            }
+            this.width = maxX - minX;
+        }
+
+        if (height == 0) {
+            double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
+            for (int i = 1; i < polygonCoordinates.length; i += 2) {
+                double y = polygonCoordinates[i];
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
+            }
+            this.height = maxY - minY;
+        }
     }
 
     public double[] getPolygonCoordinates() {
         return polygonCoordinates;
     }
-       
 
     public void setX(double x) {
-        this.x =x;
+        this.x = x;
     }
 
     public double getX() {
         return x;
     }
 
-    
     public void setY(double y) {
         this.y = y;
     }
@@ -51,6 +69,12 @@ public class Entity implements Serializable {
     public double getRotation() {
         return rotation;
     }
-        
 
+    public double getWidth() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
 }
