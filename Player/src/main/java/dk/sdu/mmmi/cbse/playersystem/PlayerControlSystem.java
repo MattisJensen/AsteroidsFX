@@ -26,6 +26,13 @@ public class PlayerControlSystem implements IEntityProcessingService {
 
         for (Entity player : world.getEntities(Player.class)) {
             setShape(player);
+
+            long currentSystemTime = System.currentTimeMillis();
+            if (currentSystemTime - lastShotExecutionTime > SHOT_COOLDOWN && gameData.getKeys().isDown(GameKeys.SPACE)) {
+                lastShotExecutionTime = currentSystemTime;
+                world.addEntity(getBulletSPIs().stream().findFirst().get().createBullet(player, gameData));
+            }
+
             setOutOfWindowShip(player);
         }
     }
@@ -37,12 +44,6 @@ public class PlayerControlSystem implements IEntityProcessingService {
 
         if (gameData.getKeys().isDown(GameKeys.RIGHT)) {
             entity.setRotation(entity.getRotation() + 5);
-        }
-
-        long currentSystemTime = System.currentTimeMillis();
-        if (currentSystemTime - lastShotExecutionTime > SHOT_COOLDOWN && gameData.getKeys().isDown(GameKeys.SPACE)) {
-            lastShotExecutionTime = currentSystemTime;
-            world.addEntity(getBulletSPIs().stream().findFirst().get().createBullet(entity, gameData));
         }
 
         double changeX = Math.sin(Math.toRadians(entity.getRotation()));

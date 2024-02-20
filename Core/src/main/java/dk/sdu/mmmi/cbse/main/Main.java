@@ -109,7 +109,6 @@ public class Main extends Application {
     }
 
     private void update() {
-        // Update
         for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
             entityProcessorService.process(gameData, world);
 
@@ -132,9 +131,10 @@ public class Main extends Application {
                 }
             }
         }
-//        for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
-//            postEntityProcessorService.process(gameData, world);
-//        }
+
+        for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
+            postEntityProcessorService.process(gameData, world);
+        }
     }
 
     private void draw() {

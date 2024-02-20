@@ -34,7 +34,7 @@ public class BulletControlSystem implements IEntityProcessingService, BulletSPI 
         Entity bullet = new Bullet();
         bullet.setPolygonCoordinates(0, 0, 3, 0, 3, 3, 0, 3);
 
-        double distanceFromCenter = (e.getHeight() / 2) + 2;
+        double spawnDistanceFromCenter = (e.getHeight() / 2) + 2;
 
         // Calculate the center of the entity
         double centerX = e.getX() + e.getWidth() / 2;
@@ -42,8 +42,8 @@ public class BulletControlSystem implements IEntityProcessingService, BulletSPI 
 
         // Calculate the position of the bullet
         double rotationInRadians = Math.toRadians(e.getRotation());
-        double coordX = (centerX + Math.sin(rotationInRadians) * distanceFromCenter);
-        double coordY = (centerY - Math.cos(rotationInRadians) * distanceFromCenter);
+        double coordX = (centerX + Math.sin(rotationInRadians) * spawnDistanceFromCenter);
+        double coordY = (centerY - Math.cos(rotationInRadians) * spawnDistanceFromCenter);
 
         // Set the position and rotation of the bullet
         bullet.setX(coordX);

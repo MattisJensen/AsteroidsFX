@@ -18,14 +18,15 @@
         <module>CommonBullet</module>
         <module>Enemy</module>
         <module>Asteroid</module>
+        <module>Collision</module>
     </modules>
     <properties>
         <java>java</java>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.9</maven.compiler.source>
         <maven.compiler.target>1.9</maven.compiler.target>
     </properties>
-    
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -34,7 +35,7 @@
                 <version>21.0.2</version>
             </dependency>
         </dependencies>
-    </dependencyManagement>    
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -80,7 +81,7 @@
                         I still wanted to do it for clarity, but for some reason that results
                         in "java.lang.module.FindException: Module monitor.observer.zero not found";
                         strange... -->
-<!--                        <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8000</argument>-->
+                        <!--                        <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8000</argument>-->
                         <argument>--module=Core/dk.sdu.mmmi.cbse.main.Main</argument>
                         <argument>--add-modules javafx.graphics</argument>
                     </arguments>
