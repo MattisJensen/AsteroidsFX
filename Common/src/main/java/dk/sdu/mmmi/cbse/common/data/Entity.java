@@ -14,6 +14,9 @@ public class Entity implements Serializable {
     private double width = 0;
     private double height = 0;
 
+    private double livePoints = 1;
+    private double damagePoints = 1;
+
     public String getID() {
         return ID.toString();
     }
@@ -62,6 +65,14 @@ public class Entity implements Serializable {
         return y;
     }
 
+    public double getCenterX() {
+        return x + (width / 2);
+    }
+
+    public double getCenterY() {
+        return y + (height / 2);
+    }
+
     public void setRotation(double rotation) {
         this.rotation = rotation;
     }
@@ -76,5 +87,25 @@ public class Entity implements Serializable {
 
     public double getHeight() {
         return height;
+    }
+
+    public double getLivePoints() {
+        return livePoints;
+    }
+
+    public void setLivePoints(double livePoints) {
+        this.livePoints = livePoints;
+    }
+
+    public void removeLivePoints(double livePoints) {
+        this.livePoints -= livePoints;
+    }
+
+    public double getDamagePoints() {
+        return damagePoints;
+    }
+
+    public void setDamagePoints(double damagePoints) {
+        this.damagePoints = damagePoints;
     }
 }

@@ -32,7 +32,7 @@ public class BulletControlSystem implements IEntityProcessingService, BulletSPI 
     @Override
     public Entity createBullet(Entity e, GameData gameData) {
         Entity bullet = new Bullet();
-        bullet.setPolygonCoordinates(0, 0, 3, 0, 3, 3, 0, 3);
+        bullet.setPolygonCoordinates(1.0001000000047497,2.9602200984954834,1.574170708656311,4.346149206161499,2.9601000547409058,4.920220136642456,4.346027612686157,4.346151351928711,4.920099973678589,2.9602200984954834,4.3460307121276855,1.5742921829223633,2.9600998163223267,1.0002200985036325,1.5741719603538513,1.574289619922638);
 
         double spawnDistanceFromCenter = (e.getHeight() / 2) + 2;
 

@@ -9,6 +9,9 @@ public class Asteroid extends Entity {
     private double minMovingSpeed = 0.3;
     private double rotationSpeedRatio = 2.5;
 
+    private double maxHitPoints = 5;
+    private double minHitPoints = 2;
+
     private double initialRotation = 0;
     private double rotationSpeed;
     private double movingSpeed;
@@ -19,6 +22,8 @@ public class Asteroid extends Entity {
         Random random = new Random();
         movingSpeed = random.nextDouble(minMovingSpeed, maxMovingSpeed);
         rotationSpeed = movingSpeed < 1 ? movingSpeed * rotationSpeedRatio : movingSpeed * movingSpeed * rotationSpeedRatio;
+
+        setLivePoints(random.nextDouble(minHitPoints, maxHitPoints));
     }
 
     public double getInitialRotation() {
