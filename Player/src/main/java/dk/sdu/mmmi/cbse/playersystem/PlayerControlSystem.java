@@ -17,7 +17,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
     private GameData gameData;
     private World world;
     private static long lastShotExecutionTime = 0;
-    private final int SHOT_COOLDOWN = 300;
+    private final int SHOT_COOLDOWN = 50;
 
     @Override
     public void process(GameData gameData, World world) {
@@ -53,8 +53,8 @@ public class PlayerControlSystem implements IEntityProcessingService {
             entity.setX(entity.getX() + (changeX * 2));
             entity.setY(entity.getY() - (changeY * 2));
         } else {
-            entity.setX(entity.getX() + changeX);
-            entity.setY(entity.getY() - changeY);
+            entity.setX(entity.getX() + changeX / 2);
+            entity.setY(entity.getY() - changeY / 2);
         }
     }
 

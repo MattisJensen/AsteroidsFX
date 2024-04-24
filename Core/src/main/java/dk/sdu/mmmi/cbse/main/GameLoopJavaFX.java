@@ -7,21 +7,8 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -29,16 +16,18 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.util.Collection;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 
-    private final GameData gameData = new GameData();
+import static java.util.stream.Collectors.toList;
+
+public class GameLoopJavaFX extends Application {
+    private GameData gameData = new GameData();
     private final World world = new World();
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
-
-    public static void main(String[] args) {
-        launch(Main.class);
-    }
 
     @Override
     public void start(Stage window) throws Exception {
@@ -109,27 +98,28 @@ public class Main extends Application {
     }
 
     private void update() {
+        // Remove deleted entities from the game window and the polygons map
+        for (Entity entity : polygons.keySet()) {
+            if (!world.getEntities().contains(entity)) {
+                Polygon p = polygons.get(entity);
+                if (gameWindow.getChildren().contains(p)) {
+                    gameWindow.getChildren().remove(p);
+                }
+                polygons.remove(entity);
+            }
+        }
+
+        // Add new entities to the game window and the polygons map
+        for (Entity entity : world.getEntities()) {
+            if (!polygons.containsKey(entity)) {
+                Polygon polygon = new Polygon(entity.getPolygonCoordinates());
+                polygons.put(entity, polygon);
+                gameWindow.getChildren().add(polygon);
+            }
+        }
+
         for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
             entityProcessorService.process(gameData, world);
-
-            // Remove deleted entities from the game window
-            for (Entity entity : polygons.keySet()) {
-                if (!world.getEntities().contains(entity)) {
-                    Polygon p = polygons.get(entity);
-                    if (gameWindow.getChildren().contains(p)) {
-                        gameWindow.getChildren().remove(p);
-                    }
-                }
-            }
-
-            // Add new entities to the game window
-            for (Entity entity : world.getEntities()) {
-                if (!polygons.containsKey(entity)) {
-                    Polygon polygon = new Polygon(entity.getPolygonCoordinates());
-                    polygons.put(entity, polygon);
-                    gameWindow.getChildren().add(polygon);
-                }
-            }
         }
 
         for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {

@@ -120,7 +120,7 @@ public class AsteroidControlSystem implements IEntityProcessingService {
         // New polygon based on the old asteroid's polygon
         double newSize = oldAsteroid.getAsteroidSize() - 1;
         double[] oldCoordinates = oldAsteroid.getPolygonCoordinates();
-        double[] newCoordinates = getScaledPolygonCoordinates(oldCoordinates, 0.5);
+        double[] newCoordinates = getScaledPolygonCoordinates(oldCoordinates, 0.8);
 
         // Create 2 new asteroids
         Asteroid newAsteroid1 = new Asteroid(newSize);
@@ -141,8 +141,8 @@ public class AsteroidControlSystem implements IEntityProcessingService {
         newAsteroid2.setY(oldAsteroid.getCenterY() - offsetY);
 
         // Change the new asteroids' rotation
-        newAsteroid1.setInitialRotation(oldAsteroid.getInitialRotation() + 10);
-        newAsteroid2.setInitialRotation(oldAsteroid.getInitialRotation() - 10);
+        newAsteroid1.setInitialRotation(oldAsteroid.getInitialRotation() + 20);
+        newAsteroid2.setInitialRotation(oldAsteroid.getInitialRotation() - 20);
 
         // Set the new asteroids' moving and rotation speed
 //        newAsteroid1.setMovingSpeed(oldAsteroid.getMovingSpeed());

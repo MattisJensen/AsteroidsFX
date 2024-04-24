@@ -30,6 +30,8 @@ public class GameKeys {
     }
 
     public boolean isPressed(int k) {
-        return keys[k] && !pkeys[k];
+        boolean test = keys[k] && !pkeys[k];
+        update();
+        return test;
     }
 }

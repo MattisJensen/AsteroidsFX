@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.cbse.common.data;
 
+//@Component
 public class GameData {
     private int displayWidth  = 800 ;
     private int displayHeight = 800;

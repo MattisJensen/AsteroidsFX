@@ -18,15 +18,11 @@ public class EnemyControlSystem implements IEntityProcessingService {
     private World world;
     private static long lastShotExecutionTime = 0;
     private int shotBlockTime = 400;
-    private int randomInt = 1;
 
     @Override
     public void process(GameData gameData, World world) {
         this.gameData = gameData;
         this.world = world;
-
-        Random random = new Random();
-        randomInt = random.nextInt(1, 20);
 
         for (Entity enemy : world.getEntities(Enemy.class)) {
             setShape(enemy);
@@ -35,6 +31,9 @@ public class EnemyControlSystem implements IEntityProcessingService {
     }
 
     private void setShape(Entity entity) {
+        Random random = new Random();
+        int randomInt = random.nextInt(1, 20);
+
         if (randomInt <= 2) {
             entity.setRotation(entity.getRotation() - 5);
         }

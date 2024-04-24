@@ -11,11 +11,23 @@ public class Entity implements Serializable {
     private double x;
     private double y;
     private double rotation;
-    private double width = 0;
-    private double height = 0;
+    private double width;
+    private double height;
 
-    private double livePoints = 1;
-    private double damagePoints = 1;
+    private double livePoints;
+    private double damagePoints;
+    private double movingSpeed;
+
+    public Entity() {
+        this.width = 0;
+        this.height = 0;
+        this.x = 0;
+        this.y = 0;
+        this.rotation = 0;
+        this.livePoints = 1;
+        this.damagePoints = 1;
+        this.movingSpeed = 0;
+    }
 
     public String getID() {
         return ID.toString();
@@ -24,25 +36,21 @@ public class Entity implements Serializable {
     public void setPolygonCoordinates(double... coordinates) {
         this.polygonCoordinates = coordinates;
 
-        if (width == 0) {
-            double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
-            for (int i = 0; i < polygonCoordinates.length; i += 2) {
-                double x = polygonCoordinates[i];
-                minX = Math.min(minX, x);
-                maxX = Math.max(maxX, x);
-            }
-            this.width = maxX - minX;
+        double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
+        for (int i = 0; i < polygonCoordinates.length; i += 2) {
+            double x = polygonCoordinates[i];
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
         }
+        this.width = maxX - minX;
 
-        if (height == 0) {
-            double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
-            for (int i = 1; i < polygonCoordinates.length; i += 2) {
-                double y = polygonCoordinates[i];
-                minY = Math.min(minY, y);
-                maxY = Math.max(maxY, y);
-            }
-            this.height = maxY - minY;
+        double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
+        for (int i = 1; i < polygonCoordinates.length; i += 2) {
+            double y = polygonCoordinates[i];
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
         }
+        this.height = maxY - minY;
     }
 
     public double[] getPolygonCoordinates() {
@@ -99,6 +107,18 @@ public class Entity implements Serializable {
 
     public void removeLivePoints(double livePoints) {
         this.livePoints -= livePoints;
+    }
+
+    public double getMovingSpeed() {
+        return movingSpeed;
+    }
+
+    public void setMovingSpeed(double movingSpeed) {
+        this.movingSpeed = movingSpeed;
+    }
+
+    public double getCurrentDamage() {
+        return damagePoints + movingSpeed * 1.2;
     }
 
     public double getDamagePoints() {

@@ -17,8 +17,8 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
         for (Entity entity1 : entities) {
             for (Entity entity2 : entities) {
                 if (entity1 != entity2 && !entitiesToRemove.contains(entity1) && !entitiesToRemove.contains(entity2) && isCollision(entity1, entity2)) {
-                    entity1.removeLivePoints(entity2.getDamagePoints());
-                    entity2.removeLivePoints(entity1.getDamagePoints());
+                    entity1.removeLivePoints(entity2.getCurrentDamage());
+                    entity2.removeLivePoints(entity1.getCurrentDamage());
 
                     if (entity1.getLivePoints() <= 0) {
                         entitiesToRemove.add(entity1);
