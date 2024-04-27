@@ -1,13 +1,18 @@
 package dk.sdu.mmmi.cbse.common.data;
 
 //@Component
+
+/**
+ * GameData: Stores data about the game
+ */
 public class GameData {
     private int displayWidth  = 800 ;
     private int displayHeight = 800;
     private final GameKeys keys = new GameKeys();
+    private double deltaTime;
 
     public GameKeys getKeys() {
-        return keys;
+        return this.keys;
     }
 
     public void setDisplayWidth(int width) {
@@ -15,7 +20,7 @@ public class GameData {
     }
 
     public int getDisplayWidth() {
-        return displayWidth;
+        return this.displayWidth;
     }
 
     public void setDisplayHeight(int height) {
@@ -23,6 +28,14 @@ public class GameData {
     }
 
     public int getDisplayHeight() {
-        return displayHeight;
+        return this.displayHeight;
+    }
+
+    public double getDeltaTime() {
+        return this.deltaTime;
+    }
+
+    public void setDeltaTime(double deltaTime) {
+        this.deltaTime = deltaTime;
     }
 }

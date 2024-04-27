@@ -3,8 +3,10 @@ package dk.sdu.mmmi.cbse.common.data;
 import java.io.Serializable;
 import java.util.UUID;
 
+/**
+ * Entity: A polygon based entity with a set of coordinates
+ */
 public class Entity implements Serializable {
-
     private final UUID ID = UUID.randomUUID();
 
     private double[] polygonCoordinates;
@@ -14,25 +16,30 @@ public class Entity implements Serializable {
     private double width;
     private double height;
 
-    private double livePoints;
-    private double damagePoints;
-    private double movingSpeed;
-
-    public Entity() {
+    /**
+     * Constructor for Entity
+     *
+     * @param polygonCoordinates The polygon coordinates
+     */
+    public Entity(double... polygonCoordinates) {
+        setPolygonCoordinates(polygonCoordinates);
         this.width = 0;
         this.height = 0;
         this.x = 0;
         this.y = 0;
         this.rotation = 0;
-        this.livePoints = 1;
-        this.damagePoints = 1;
-        this.movingSpeed = 0;
     }
 
     public String getID() {
         return ID.toString();
     }
 
+    /**
+     * Sets the polygon coordinates of the entity
+     * Sets the width and height of the entity based on the provided polygon coordinates
+     *
+     * @param coordinates The polygon coordinates
+     */
     public void setPolygonCoordinates(double... coordinates) {
         this.polygonCoordinates = coordinates;
 
@@ -57,27 +64,27 @@ public class Entity implements Serializable {
         return polygonCoordinates;
     }
 
-    public void setX(double x) {
+    public void setXCoordinate(double x) {
         this.x = x;
     }
 
-    public double getX() {
+    public double getXCoordinate() {
         return x;
     }
 
-    public void setY(double y) {
+    public void setYCoordinate(double y) {
         this.y = y;
     }
 
-    public double getY() {
+    public double getYCoordinate() {
         return y;
     }
 
-    public double getCenterX() {
+    public double getCenterXCoordinate() {
         return x + (width / 2);
     }
 
-    public double getCenterY() {
+    public double getCenterYCoordinate() {
         return y + (height / 2);
     }
 
@@ -95,37 +102,5 @@ public class Entity implements Serializable {
 
     public double getHeight() {
         return height;
-    }
-
-    public double getLivePoints() {
-        return livePoints;
-    }
-
-    public void setLivePoints(double livePoints) {
-        this.livePoints = livePoints;
-    }
-
-    public void removeLivePoints(double livePoints) {
-        this.livePoints -= livePoints;
-    }
-
-    public double getMovingSpeed() {
-        return movingSpeed;
-    }
-
-    public void setMovingSpeed(double movingSpeed) {
-        this.movingSpeed = movingSpeed;
-    }
-
-    public double getCurrentDamage() {
-        return damagePoints + movingSpeed * 1.2;
-    }
-
-    public double getDamagePoints() {
-        return damagePoints;
-    }
-
-    public void setDamagePoints(double damagePoints) {
-        this.damagePoints = damagePoints;
     }
 }

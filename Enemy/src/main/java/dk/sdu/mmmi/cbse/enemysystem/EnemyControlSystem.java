@@ -3,9 +3,10 @@ package dk.sdu.mmmi.cbse.enemysystem;
 import dk.sdu.mmmi.cbse.common.bullet.BulletSPI;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
-import dk.sdu.mmmi.cbse.common.data.GameKeys;
 import dk.sdu.mmmi.cbse.common.data.World;
-import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
+import dk.sdu.mmmi.cbse.common.services.entityproperties.IWeapon;
+import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
+import dk.sdu.mmmi.cbse.common.services.processing.IMovableProcessingService;
 
 import java.util.Collection;
 import java.util.Random;
@@ -13,7 +14,7 @@ import java.util.ServiceLoader;
 
 import static java.util.stream.Collectors.toList;
 
-public class EnemyControlSystem implements IEntityProcessingService {
+public class EnemyControlSystem implements IEntityProcessingService, IMovableProcessingService {
     private GameData gameData;
     private World world;
     private static long lastShotExecutionTime = 0;
@@ -25,12 +26,34 @@ public class EnemyControlSystem implements IEntityProcessingService {
         this.world = world;
 
         for (Entity enemy : world.getEntities(Enemy.class)) {
-            setShape(enemy);
-            setOutOfWindowShip(enemy);
+            moveEntity(enemy);
+            removeOutOfWindowEntity(enemy);
+            shootIfPossible((Enemy) enemy);
         }
     }
 
-    private void setShape(Entity entity) {
+    /**
+     * Shoots a bullet if the enemy is allowed to shoot
+     * Moreover the enemy shot is based on a random number
+     *
+     * @param enemy The enemy entity
+     */
+    public void shootIfPossible(Enemy enemy) {
+        boolean chanceToShoot = (int) (Math.random() * 20) + 1 > 18; // 5% chance to shoot
+
+        BulletSPI bulletSPI = getBulletSPIs().stream().findFirst().orElse(null);
+        if (bulletSPI != null) {
+            Entity bullet = bulletSPI.createBullet(gameData, enemy);
+            if (bullet instanceof IWeapon
+                    && enemy.isAllowedToShoot(((IWeapon) bullet).getCooldown(), System.currentTimeMillis())
+                    && chanceToShoot) {
+                world.addEntity(bullet);
+            }
+        }
+    }
+
+    @Override
+    public void moveEntity(Entity entity) {
         Random random = new Random();
         int randomInt = random.nextInt(1, 20);
 
@@ -41,42 +64,42 @@ public class EnemyControlSystem implements IEntityProcessingService {
             entity.setRotation(entity.getRotation() + 5);
         }
 
-        long currentSystemTime = System.currentTimeMillis();
-        if (currentSystemTime - lastShotExecutionTime > shotBlockTime && randomInt > 18) {
-            lastShotExecutionTime = currentSystemTime;
-            world.addEntity(getBulletSPIs().stream().findFirst().get().createBullet(entity, gameData));
-        }
-
         double changeX = Math.sin(Math.toRadians(entity.getRotation()));
         double changeY = Math.cos(Math.toRadians(entity.getRotation()));
 
         if (randomInt > 14) {
-            entity.setX(entity.getX() + (changeX * 2));
-            entity.setY(entity.getY() - (changeY * 2));
+            entity.setXCoordinate(entity.getXCoordinate() + (changeX * 2));
+            entity.setYCoordinate(entity.getYCoordinate() - (changeY * 2));
         } else {
-            entity.setX(entity.getX() + changeX);
-            entity.setY(entity.getY() - changeY);
+            entity.setXCoordinate(entity.getXCoordinate() + changeX);
+            entity.setYCoordinate(entity.getYCoordinate() - changeY);
         }
     }
 
-    private void setOutOfWindowShip(Entity entity) {
-        if (entity.getX() < 30) {
+    @Override
+    public void removeOutOfWindowEntity(Entity entity) {
+        if (entity.getXCoordinate() < 30) {
             entity.setRotation(entity.getRotation() - 4);
-            entity.setX(30);
-        } else if (entity.getX() > gameData.getDisplayWidth() - 30) {
+            entity.setXCoordinate(30);
+        } else if (entity.getXCoordinate() > gameData.getDisplayWidth() - 30) {
             entity.setRotation(entity.getRotation() - 4);
-            entity.setX(gameData.getDisplayWidth() - 30);
+            entity.setXCoordinate(gameData.getDisplayWidth() - 30);
         }
 
-        if (entity.getY() < 30) {
+        if (entity.getYCoordinate() < 30) {
             entity.setRotation(entity.getRotation() - 4);
-            entity.setY(30);
-        } else if (entity.getY() > gameData.getDisplayHeight() - 30) {
+            entity.setYCoordinate(30);
+        } else if (entity.getYCoordinate() > gameData.getDisplayHeight() - 30) {
             entity.setRotation(entity.getRotation() - 4);
-            entity.setY(gameData.getDisplayHeight() - 30);
+            entity.setYCoordinate(gameData.getDisplayHeight() - 30);
         }
     }
 
+    /**
+     * Returns a collection of all available BulletSPIs
+     *
+     * @return A collection of all available BulletSPIs
+     */
     private Collection<? extends BulletSPI> getBulletSPIs() {
         return ServiceLoader.load(BulletSPI.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }

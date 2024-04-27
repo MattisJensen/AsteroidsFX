@@ -22,7 +22,7 @@
         <module>Core</module>
         <module>Common</module>
         <module>Player</module>
-        <module>Bullet</module>
+        <module>SmallBullet</module>
         <module>CommonBullet</module>
         <module>Enemy</module>
         <module>Asteroid</module>
