@@ -4,9 +4,8 @@ import dk.sdu.mmmi.cbse.common.bullet.BulletSPI;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IWeapon;
 import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
-import dk.sdu.mmmi.cbse.common.services.processing.IMovableProcessingService;
+import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 import java.util.Collection;
 import java.util.Random;
@@ -14,21 +13,20 @@ import java.util.ServiceLoader;
 
 import static java.util.stream.Collectors.toList;
 
-public class EnemyControlSystem implements IEntityProcessingService, IMovableProcessingService {
+public class EnemyControlSystem implements IEntityProcessingService {
     private GameData gameData;
     private World world;
-    private static long lastShotExecutionTime = 0;
-    private int shotBlockTime = 400;
 
     @Override
     public void process(GameData gameData, World world) {
         this.gameData = gameData;
         this.world = world;
 
-        for (Entity enemy : world.getEntities(Enemy.class)) {
-            moveEntity(enemy);
-            removeOutOfWindowEntity(enemy);
+        for (Entity enemy : this.world.getEntities(Enemy.class)) {
+            moveEntity((Enemy) enemy);
+            windowBoundaryInteraction(enemy);
             shootIfPossible((Enemy) enemy);
+            rotateIfEntityInRange((Enemy) enemy);
         }
     }
 
@@ -39,59 +37,97 @@ public class EnemyControlSystem implements IEntityProcessingService, IMovablePro
      * @param enemy The enemy entity
      */
     public void shootIfPossible(Enemy enemy) {
-        boolean chanceToShoot = (int) (Math.random() * 20) + 1 > 18; // 5% chance to shoot
+        // If random number is higher than the chance to shoot, the enemy will not shoot
+        if (Math.random() > enemy.getChanceToShoot()) {
+            return;
+        }
 
-        BulletSPI bulletSPI = getBulletSPIs().stream().findFirst().orElse(null);
-        if (bulletSPI != null) {
-            Entity bullet = bulletSPI.createBullet(gameData, enemy);
-            if (bullet instanceof IWeapon
-                    && enemy.isAllowedToShoot(((IWeapon) bullet).getCooldown(), System.currentTimeMillis())
-                    && chanceToShoot) {
-                world.addEntity(bullet);
+        for (BulletSPI bulletSPI : getBulletSPIs()) {
+            Entity bullet = bulletSPI.createBullet(this.gameData, enemy);
+            if (bullet instanceof IWeapon weaponBullet) {
+                if (enemy.isAllowedToShoot(weaponBullet.getCooldown(), System.currentTimeMillis())) {
+                    this.world.addEntity(bullet);
+                }
             }
+            break;
         }
     }
 
-    @Override
-    public void moveEntity(Entity entity) {
+    /**
+     * Moves the entity's shape
+     *
+     * @param enemy The entity to move
+     */
+    public void moveEntity(Enemy enemy) {
         Random random = new Random();
         int randomInt = random.nextInt(1, 20);
 
         if (randomInt <= 2) {
-            entity.setRotation(entity.getRotation() - 5);
+            enemy.setRotation(enemy.getRotation() - 5);
         }
         if (randomInt <= 4 && randomInt > 2) {
-            entity.setRotation(entity.getRotation() + 5);
+            enemy.setRotation(enemy.getRotation() + 5);
         }
 
-        double changeX = Math.sin(Math.toRadians(entity.getRotation()));
-        double changeY = Math.cos(Math.toRadians(entity.getRotation()));
+        double changeX = Math.sin(Math.toRadians(enemy.getRotation()));
+        double changeY = Math.cos(Math.toRadians(enemy.getRotation()));
 
         if (randomInt > 14) {
-            entity.setXCoordinate(entity.getXCoordinate() + (changeX * 2));
-            entity.setYCoordinate(entity.getYCoordinate() - (changeY * 2));
+            enemy.setXCoordinate(enemy.getXCoordinate() + changeX * 2.3 * enemy.getMovingSpeed() * this.gameData.getDeltaTime());
+            enemy.setYCoordinate(enemy.getYCoordinate() - changeY * 2.3 * enemy.getMovingSpeed() * this.gameData.getDeltaTime());
         } else {
-            entity.setXCoordinate(entity.getXCoordinate() + changeX);
-            entity.setYCoordinate(entity.getYCoordinate() - changeY);
+            enemy.setXCoordinate(enemy.getXCoordinate() + changeX * enemy.getMovingSpeed() * this.gameData.getDeltaTime());
+            enemy.setYCoordinate(enemy.getYCoordinate() - changeY * enemy.getMovingSpeed() * this.gameData.getDeltaTime());
         }
     }
 
-    @Override
-    public void removeOutOfWindowEntity(Entity entity) {
+    /**
+     * Rotates the enemy if an entity is in range
+     *
+     * @param enemy The enemy entity which should rotate
+     */
+    public void rotateIfEntityInRange(Enemy enemy) {
+        for (Entity entity : this.world.getEntities()) {
+            if (entity != enemy && distanceBetweenEntities(enemy, entity) <= 16) {
+                enemy.setRotation(enemy.getRotation() + 6);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Calculates the distance between two entities
+     *
+     * @param entity1 The first entity
+     * @param entity2 The second entity
+     * @return The distance between the two entities
+     */
+    private double distanceBetweenEntities(Entity entity1, Entity entity2) {
+        double distanceX = entity1.getXCoordinate() - entity2.getXCoordinate(); // x1 - x2
+        double distanceY = entity1.getYCoordinate() - entity2.getYCoordinate(); // y1 - y2
+        return Math.sqrt(distanceX * distanceX + distanceY * distanceY); // sqrt((x1 - x2)^2 + (y1 - y2)^2)
+    }
+
+    /**
+     * Handles the interaction between the entity and the window boundaries.
+     *
+     * @param entity The entity to check
+     */
+    public void windowBoundaryInteraction(Entity entity) {
         if (entity.getXCoordinate() < 30) {
-            entity.setRotation(entity.getRotation() - 4);
+            entity.setRotation(entity.getRotation() - 8);
             entity.setXCoordinate(30);
-        } else if (entity.getXCoordinate() > gameData.getDisplayWidth() - 30) {
-            entity.setRotation(entity.getRotation() - 4);
-            entity.setXCoordinate(gameData.getDisplayWidth() - 30);
+        } else if (entity.getXCoordinate() > this.gameData.getDisplayWidth() - 60) {
+            entity.setRotation(entity.getRotation() - 8);
+            entity.setXCoordinate(this.gameData.getDisplayWidth() - 60);
         }
 
         if (entity.getYCoordinate() < 30) {
-            entity.setRotation(entity.getRotation() - 4);
+            entity.setRotation(entity.getRotation() - 8);
             entity.setYCoordinate(30);
-        } else if (entity.getYCoordinate() > gameData.getDisplayHeight() - 30) {
-            entity.setRotation(entity.getRotation() - 4);
-            entity.setYCoordinate(gameData.getDisplayHeight() - 30);
+        } else if (entity.getYCoordinate() > this.gameData.getDisplayHeight() - 60) {
+            entity.setRotation(entity.getRotation() - 8);
+            entity.setYCoordinate(this.gameData.getDisplayHeight() - 60);
         }
     }
 

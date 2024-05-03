@@ -10,6 +10,7 @@ public class Entity implements Serializable {
     private final UUID ID = UUID.randomUUID();
 
     private double[] polygonCoordinates;
+    private CustomColor color;
     private double x;
     private double y;
     private double rotation;
@@ -21,13 +22,15 @@ public class Entity implements Serializable {
      *
      * @param polygonCoordinates The polygon coordinates
      */
-    public Entity(double... polygonCoordinates) {
-        setPolygonCoordinates(polygonCoordinates);
+    public Entity(CustomColor color, double... polygonCoordinates) {
+        this.color = color;
         this.width = 0;
         this.height = 0;
         this.x = 0;
         this.y = 0;
         this.rotation = 0;
+
+        setPolygonCoordinates(polygonCoordinates);
     }
 
     public String getID() {
@@ -44,16 +47,16 @@ public class Entity implements Serializable {
         this.polygonCoordinates = coordinates;
 
         double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
-        for (int i = 0; i < polygonCoordinates.length; i += 2) {
-            double x = polygonCoordinates[i];
+        for (int i = 0; i < this.polygonCoordinates.length; i += 2) {
+            double x = this.polygonCoordinates[i];
             minX = Math.min(minX, x);
             maxX = Math.max(maxX, x);
         }
         this.width = maxX - minX;
 
         double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
-        for (int i = 1; i < polygonCoordinates.length; i += 2) {
-            double y = polygonCoordinates[i];
+        for (int i = 1; i < this.polygonCoordinates.length; i += 2) {
+            double y = this.polygonCoordinates[i];
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
         }
@@ -61,7 +64,15 @@ public class Entity implements Serializable {
     }
 
     public double[] getPolygonCoordinates() {
-        return polygonCoordinates;
+        return this.polygonCoordinates;
+    }
+
+    public CustomColor getColor() {
+        return this.color;
+    }
+
+    public void setColor(CustomColor color) {
+        this.color = color;
     }
 
     public void setXCoordinate(double x) {
@@ -69,7 +80,7 @@ public class Entity implements Serializable {
     }
 
     public double getXCoordinate() {
-        return x;
+        return this.x;
     }
 
     public void setYCoordinate(double y) {
@@ -77,15 +88,15 @@ public class Entity implements Serializable {
     }
 
     public double getYCoordinate() {
-        return y;
+        return this.y;
     }
 
     public double getCenterXCoordinate() {
-        return x + (width / 2);
+        return this.x + (this.width / 2);
     }
 
     public double getCenterYCoordinate() {
-        return y + (height / 2);
+        return this.y + (this.height / 2);
     }
 
     public void setRotation(double rotation) {
@@ -93,14 +104,14 @@ public class Entity implements Serializable {
     }
 
     public double getRotation() {
-        return rotation;
+        return this.rotation;
     }
 
     public double getWidth() {
-        return width;
+        return this.width;
     }
 
     public double getHeight() {
-        return height;
+        return this.height;
     }
 }

@@ -6,6 +6,7 @@ import dk.sdu.mmmi.cbse.enemysystem.EnemyPlugin;
 
 module Enemy {
     requires Common;
+    requires CommonWeapon;
     requires CommonBullet;
     uses BulletSPI;
     provides IGamePluginService with EnemyPlugin;

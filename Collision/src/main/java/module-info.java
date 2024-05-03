@@ -3,5 +3,6 @@ import dk.sdu.mmmi.cbse.common.services.processing.IPostEntityProcessingService;
 
 module Collision {
     requires Common;
+    requires CommonWeapon;
     provides IPostEntityProcessingService with CollisionControlSystem;
 }

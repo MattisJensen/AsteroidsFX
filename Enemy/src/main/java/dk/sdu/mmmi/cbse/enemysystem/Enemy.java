@@ -1,14 +1,15 @@
 package dk.sdu.mmmi.cbse.enemysystem;
 
+import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IWeaponUser;
 
 /**
  * Enemy: An enemy entity which can move, be destroyed, deal damage and use weapons
  */
-public class Enemy extends Entity implements IMoveable, IDestroyable, IWeaponUser {
+public class Enemy extends Entity implements IMoveable, IDestroyable {
+    private double chanceToShoot;
     private double movingSpeed;
     private double livePoints;
     private double lastShotTime;
@@ -16,15 +17,41 @@ public class Enemy extends Entity implements IMoveable, IDestroyable, IWeaponUse
     /**
      * Constructor for the Enemy
      *
+     * @param chanceToShoot the chance to shoot of the enemy (0.0 to 1.0)
      * @param movingSpeed the moving speed of the enemy
      * @param livePoints the live points of the enemy
      * @param polygonCoordinates the polygon coordinates of the enemy
      */
-    public Enemy(double movingSpeed, double livePoints, double... polygonCoordinates) {
-        super(polygonCoordinates);
+    public Enemy(double chanceToShoot, double movingSpeed, double livePoints, CustomColor color, double... polygonCoordinates) {
+        super(color, polygonCoordinates);
+        this.chanceToShoot = chanceToShoot;
         this.movingSpeed = movingSpeed;
         this.livePoints = livePoints;
         this.lastShotTime = 0;
+    }
+
+    /**
+     * Determine if the entity is allowed to shoot, depending on the entity's weapon cooldown
+     * Set the last time the entity shot if the entity is allowed to shoot
+     *
+     * @param currentTimeInMillis the current time in milliseconds
+     * @return true if the entity is allowed to shoot, false otherwise
+     */
+    public boolean isAllowedToShoot(double cooldown, double currentTimeInMillis) {
+        if (cooldown < currentTimeInMillis - this.lastShotTime) {
+            this.lastShotTime = currentTimeInMillis;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public double getChanceToShoot() {
+        return chanceToShoot;
+    }
+
+    public void setChanceToShoot(double chanceToShoot) {
+        this.chanceToShoot = chanceToShoot;
     }
 
     @Override
@@ -52,22 +79,10 @@ public class Enemy extends Entity implements IMoveable, IDestroyable, IWeaponUse
         this.livePoints = livePoints;
     }
 
-    @Override
-    public boolean isAllowedToShoot(double cooldown, double currentTimeInMillis) {
-        if (cooldown < currentTimeInMillis - this.lastShotTime) {
-            this.lastShotTime = currentTimeInMillis;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public void setLastShotTime(double lastShotTime) {
         this.lastShotTime = lastShotTime;
     }
 
-    @Override
     public double getLastShotTime() {
         return this.lastShotTime;
     }

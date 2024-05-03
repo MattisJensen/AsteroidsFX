@@ -1,4 +1,4 @@
-package dk.sdu.mmmi.cbse.common.services.entityproperties;
+package dk.sdu.mmmi.cbse.common.weapon;
 
 /**
  * Interface for entities that are weapons

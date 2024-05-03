@@ -9,9 +9,17 @@ import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import dk.sdu.mmmi.cbse.common.services.processing.IPostEntityProcessingService;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -33,25 +41,37 @@ public class GameLoopJavaFX extends Application {
     @Override
     public void start(Stage window) throws Exception {
         Text text = new Text(10, 20, "Destroyed asteroids: 0");
-        gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
-        gameWindow.getChildren().add(text);
+        text.setFill(Color.rgb(60, 60, 60));
+        this.gameWindow.setPrefSize(this.gameData.getDisplayWidth(), this.gameData.getDisplayHeight());
+        this.gameWindow.getChildren().add(text);
 
-        Scene scene = new Scene(gameWindow);
+        // Set background color
+        LinearGradient linearGradient = new LinearGradient(
+                0, // start X
+                0, // start Y
+                1, // end X
+                1, // end Y
+                true, // proportional
+                CycleMethod.NO_CYCLE, // cycle colors
+                new Stop(0.1, Color.rgb(47, 0, 60)), // stops
+                new Stop(1.0, Color.rgb(33, 0, 77))
+        );
+        BackgroundFill backgroundFill = new BackgroundFill(linearGradient, CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(backgroundFill);
+        this.gameWindow.setBackground(background);
+
+        // Create game scene
+        Scene scene = new Scene(this.gameWindow);
         setKeyEvents(scene);
 
         // Lookup all Game Plugins using ServiceLoader
         for (IGamePluginService iGamePlugin : getPluginServices()) {
-            iGamePlugin.start(gameData, world);
-        }
-
-        for (Entity entity : world.getEntities()) {
-            Polygon polygon = new Polygon(entity.getPolygonCoordinates());
-            polygons.put(entity, polygon);
-            gameWindow.getChildren().add(polygon);
+            iGamePlugin.start(this.gameData, this.world);
         }
 
         render();
 
+        // Add scene to window
         window.setScene(scene);
         window.setTitle("ASTEROIDS");
         window.show();
@@ -79,16 +99,18 @@ public class GameLoopJavaFX extends Application {
     private void update() {
         updateDeltaGameTime(System.currentTimeMillis());
 
+        // Update all entities using the entity processing service
         for (IEntityProcessingService entityProcessorService : getEntityProcessingServices()) {
-            entityProcessorService.process(gameData, world);
+            entityProcessorService.process(this.gameData, this.world);
         }
 
+        // Update all entities using the post entity processing service
         for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
-            postEntityProcessorService.process(gameData, world);
+            postEntityProcessorService.process(this.gameData, this.world);
         }
 
         removeDeletedEntities();
-        addNewEntities();
+        addNewEntitiesToWindow();
     }
 
     /**
@@ -97,34 +119,45 @@ public class GameLoopJavaFX extends Application {
      * @param currentTimeInMilliseconds The current time in milliseconds.
      */
     public void updateDeltaGameTime(double currentTimeInMilliseconds) {
-        gameData.setDeltaTime((currentTimeInMilliseconds - lastSystemTime) / 1000f);
-        lastSystemTime = currentTimeInMilliseconds;
+        if (lastSystemTime == 0) {
+            lastSystemTime = currentTimeInMilliseconds;
+        }
+        this.gameData.setDeltaTime((currentTimeInMilliseconds - this.lastSystemTime) / 1000f);
+        this.lastSystemTime = currentTimeInMilliseconds;
     }
 
     /**
      * Removes deleted entities from the game window and the polygons map.
      */
     public void removeDeletedEntities() {
-        for (Entity entity : polygons.keySet()) {
-            if (!world.getEntities().contains(entity)) {
-                Polygon p = polygons.get(entity);
-                if (gameWindow.getChildren().contains(p)) {
-                    gameWindow.getChildren().remove(p);
+        for (Entity entity : this.polygons.keySet()) {
+            if (!this.world.getEntities().contains(entity)) {
+                Polygon p = this.polygons.get(entity);
+                if (this.gameWindow.getChildren().contains(p)) {
+                    this.gameWindow.getChildren().remove(p);
                 }
-                polygons.remove(entity);
+                this.polygons.remove(entity);
             }
         }
     }
 
     /**
-     * Adds new entities to the game window and the polygons map.
+     * Adds new entities to the game window and the corresponding polygon to the polygons map.
      */
-    public void addNewEntities() {
-        for (Entity entity : world.getEntities()) {
-            if (!polygons.containsKey(entity)) {
+    public void addNewEntitiesToWindow() {
+        for (Entity entity : this.world.getEntities()) {
+            if (!this.polygons.containsKey(entity)) {
                 Polygon polygon = new Polygon(entity.getPolygonCoordinates());
-                polygons.put(entity, polygon);
-                gameWindow.getChildren().add(polygon);
+
+                // Set the color of the polygon
+                int red = entity.getColor().getRed();
+                int green = entity.getColor().getGreen();
+                int blue = entity.getColor().getBlue();
+                polygon.setFill(Color.rgb(red, green, blue));
+
+                // Add the polygon to the game window
+                this.polygons.put(entity, polygon);
+                this.gameWindow.getChildren().add(polygon);
             }
         }
     }
@@ -133,11 +166,12 @@ public class GameLoopJavaFX extends Application {
      * Draws the entities of the game.
      */
     private void draw() {
-        for (Entity entity : world.getEntities()) {
-            Polygon polygon = polygons.get(entity);
+        for (Entity entity : this.world.getEntities()) {
+            Polygon polygon = this.polygons.get(entity);
             polygon.setTranslateX(entity.getXCoordinate());
             polygon.setTranslateY(entity.getYCoordinate());
             polygon.setRotate(entity.getRotation());
+
         }
     }
 
@@ -149,31 +183,31 @@ public class GameLoopJavaFX extends Application {
     public void setKeyEvents(Scene scene) {
         scene.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.LEFT)) {
-                gameData.getKeys().setKey(GameKeys.LEFT, true);
+                this.gameData.getKeys().setKey(GameKeys.LEFT, true);
             }
             if (event.getCode().equals(KeyCode.RIGHT)) {
-                gameData.getKeys().setKey(GameKeys.RIGHT, true);
+                this.gameData.getKeys().setKey(GameKeys.RIGHT, true);
             }
             if (event.getCode().equals(KeyCode.UP)) {
-                gameData.getKeys().setKey(GameKeys.UP, true);
+                this.gameData.getKeys().setKey(GameKeys.UP, true);
             }
             if (event.getCode().equals(KeyCode.SPACE)) {
-                gameData.getKeys().setKey(GameKeys.SPACE, true);
+                this.gameData.getKeys().setKey(GameKeys.SPACE, true);
             }
         });
 
         scene.setOnKeyReleased(event -> {
             if (event.getCode().equals(KeyCode.LEFT)) {
-                gameData.getKeys().setKey(GameKeys.LEFT, false);
+                this.gameData.getKeys().setKey(GameKeys.LEFT, false);
             }
             if (event.getCode().equals(KeyCode.RIGHT)) {
-                gameData.getKeys().setKey(GameKeys.RIGHT, false);
+                this.gameData.getKeys().setKey(GameKeys.RIGHT, false);
             }
             if (event.getCode().equals(KeyCode.UP)) {
-                gameData.getKeys().setKey(GameKeys.UP, false);
+                this.gameData.getKeys().setKey(GameKeys.UP, false);
             }
             if (event.getCode().equals(KeyCode.SPACE)) {
-                gameData.getKeys().setKey(GameKeys.SPACE, false);
+                this.gameData.getKeys().setKey(GameKeys.SPACE, false);
             }
         });
     }

@@ -5,9 +5,8 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.GameKeys;
 import dk.sdu.mmmi.cbse.common.data.World;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IWeapon;
 import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
-import dk.sdu.mmmi.cbse.common.services.processing.IMovableProcessingService;
+import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 import java.util.Collection;
 import java.util.ServiceLoader;
@@ -17,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * PlayerControlSystem: Controls the player entities
  */
-public class PlayerControlSystem implements IEntityProcessingService, IMovableProcessingService {
+public class PlayerControlSystem implements IEntityProcessingService {
     private GameData gameData;
     private World world;
 
@@ -27,9 +26,9 @@ public class PlayerControlSystem implements IEntityProcessingService, IMovablePr
         this.world = world;
 
         for (Entity player : this.world.getEntities(Player.class)) {
-            moveEntity(player);
-            removeOutOfWindowEntity(player);
+            moveEntity((Player) player);
             shootIfPossible((Player) player);
+            windowBoundaryInteraction(player);
         }
     }
 
@@ -40,14 +39,6 @@ public class PlayerControlSystem implements IEntityProcessingService, IMovablePr
      */
     public void shootIfPossible(Player player) {
         if (this.gameData.getKeys().isDown(GameKeys.SPACE)) {
-                /*for (BulletSPI bulletSPI : getBulletSPIs()) {
-                    Entity bullet = bulletSPI.createBullet(gameData, player);
-                    if (bullet instanceof IWeapon && player.isAllowedToShoot(((IWeapon) bullet).getCooldown(), System.currentTimeMillis())) {
-                        world.addEntity(bullet);
-                    }
-                    break; // Ensures that only one bullet is created per key press regardless of how many bulletSPIs are available
-                }*/
-            // TODO: Check this is workaround for the above by removing bullet module
             BulletSPI bulletSPI = getBulletSPIs().stream().findFirst().orElse(null);
             if (bulletSPI != null) {
                 Entity bullet = bulletSPI.createBullet(this.gameData, player);
@@ -58,30 +49,38 @@ public class PlayerControlSystem implements IEntityProcessingService, IMovablePr
         }
     }
 
-    @Override
-    public void moveEntity(Entity entity) {
+    /**
+     * Moves the entity's shape
+     *
+     * @param player The entity to move
+     */
+    public void moveEntity(Player player) {
         if (this.gameData.getKeys().isDown(GameKeys.LEFT)) {
-            entity.setRotation(entity.getRotation() - 5);
+            player.setRotation(player.getRotation() - 5);
         }
 
         if (this.gameData.getKeys().isDown(GameKeys.RIGHT)) {
-            entity.setRotation(entity.getRotation() + 5);
+            player.setRotation(player.getRotation() + 5);
         }
 
-        double changeX = Math.sin(Math.toRadians(entity.getRotation()));
-        double changeY = Math.cos(Math.toRadians(entity.getRotation()));
+        double changeX = Math.sin(Math.toRadians(player.getRotation()));
+        double changeY = Math.cos(Math.toRadians(player.getRotation()));
 
         if (this.gameData.getKeys().isDown(GameKeys.UP)) {
-            entity.setXCoordinate(entity.getXCoordinate() + (changeX * 2));
-            entity.setYCoordinate(entity.getYCoordinate() - (changeY * 2));
+            player.setXCoordinate(player.getXCoordinate() + changeX * 2.3 * player.getMovingSpeed() * this.gameData.getDeltaTime());
+            player.setYCoordinate(player.getYCoordinate() - changeY * 2.3 * player.getMovingSpeed() * this.gameData.getDeltaTime());
         } else {
-            entity.setXCoordinate(entity.getXCoordinate() + changeX / 2);
-            entity.setYCoordinate(entity.getYCoordinate() - changeY / 2);
+            player.setXCoordinate(player.getXCoordinate() + changeX * player.getMovingSpeed() * this.gameData.getDeltaTime());
+            player.setYCoordinate(player.getYCoordinate() - changeY * player.getMovingSpeed() * this.gameData.getDeltaTime());
         }
     }
 
-    @Override
-    public void removeOutOfWindowEntity(Entity entity) {
+    /**
+     * Handles the interaction between the entity and the window boundaries.
+     *
+     * @param entity The entity to check
+     */
+    public void windowBoundaryInteraction(Entity entity) {
         if (entity.getXCoordinate() < 0) {
             entity.setXCoordinate(1);
         } else if (entity.getXCoordinate() > this.gameData.getDisplayWidth()) {

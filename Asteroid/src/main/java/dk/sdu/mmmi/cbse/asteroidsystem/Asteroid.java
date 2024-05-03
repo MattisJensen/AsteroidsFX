@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.cbse.asteroidsystem;
 
+import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
@@ -9,11 +10,11 @@ import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
  */
 public class Asteroid extends Entity implements IMoveable, IDestroyable {
     private int asteroidSize;
-
-    private double initialRotation;
-    private double rotationSpeed;
     private double movingSpeed;
     private double livePoints;
+    private double rotationSpeed;
+    private double initialRotation;
+    private double livePointsSplittingThreshold;
 
     /**
      * Constructor for the Asteroid
@@ -23,15 +24,16 @@ public class Asteroid extends Entity implements IMoveable, IDestroyable {
      * @param livePoints       the live points of the asteroid
      * @param shapeCoordinates the shape coordinates of the asteroid
      */
-    public Asteroid(int asteroidSize, double movingSpeed, double livePoints, double... shapeCoordinates) {
-        setPolygonCoordinates(shapeCoordinates);
+    public Asteroid(int asteroidSize, double movingSpeed, double livePoints, double rotationSpeed, CustomColor color, double... shapeCoordinates) {
+        super(color, shapeCoordinates);
         this.asteroidSize = asteroidSize;
 
         this.movingSpeed = movingSpeed;
-        this.livePoints = livePoints;
+        this.livePointsSplittingThreshold = livePoints / 2;
+        this.livePoints = livePoints + this.livePointsSplittingThreshold;
 
+        this.rotationSpeed = rotationSpeed;
         this.initialRotation = 0;
-        this.rotationSpeed = 4;
     }
 
     public double getInitialRotation() {
@@ -56,6 +58,14 @@ public class Asteroid extends Entity implements IMoveable, IDestroyable {
 
     public void setAsteroidSize(int asteroidSize) {
         this.asteroidSize = asteroidSize;
+    }
+
+    public double getLivePointsSplittingThreshold() {
+        return livePointsSplittingThreshold;
+    }
+
+    public void setLivePointsSplittingThreshold(double livePointsSplittingThreshold) {
+        this.livePointsSplittingThreshold = livePointsSplittingThreshold;
     }
 
     @Override

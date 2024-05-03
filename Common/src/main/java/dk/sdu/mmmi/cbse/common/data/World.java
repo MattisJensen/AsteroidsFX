@@ -19,7 +19,7 @@ public class World {
      * @return The ID of the entity
      */
     public String addEntity(Entity entity) {
-        entityMap.put(entity.getID(), entity);
+        this.entityMap.put(entity.getID(), entity);
         return entity.getID();
     }
 
@@ -29,7 +29,7 @@ public class World {
      * @param entityID The ID of the entity to remove
      */
     public void removeEntity(String entityID) {
-        entityMap.remove(entityID);
+        this.entityMap.remove(entityID);
     }
 
     /**
@@ -38,7 +38,7 @@ public class World {
      * @param entity The entity to remove
      */
     public void removeEntity(Entity entity) {
-        entityMap.remove(entity.getID());
+        this.entityMap.remove(entity.getID());
     }
 
     /**
@@ -47,7 +47,7 @@ public class World {
      * @return A collection of all entities in the world
      */
     public Collection<Entity> getEntities() {
-        return entityMap.values();
+        return this.entityMap.values();
     }
 
     /**
@@ -75,7 +75,7 @@ public class World {
      * @return The entity with the specified ID
      */
     public Entity getEntity(String ID) {
-        return entityMap.get(ID);
+        return this.entityMap.get(ID);
     }
 
 }

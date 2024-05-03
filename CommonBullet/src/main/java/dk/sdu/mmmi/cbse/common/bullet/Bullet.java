@@ -1,9 +1,10 @@
 package dk.sdu.mmmi.cbse.common.bullet;
 
+import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IWeapon;
+import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 /**
  * Bullet: A bullet entity which can be shot
@@ -23,8 +24,8 @@ public class Bullet extends Entity implements IWeapon, IMoveable, IDestroyable {
      * @param damagePoints the amount of damage the bullet deals
      * @param shapeCoordinates the coordinates defining the shape of the bullet
      */
-    public Bullet(double cooldown, double movingSpeed, double livePoints, double damagePoints, double... shapeCoordinates) {
-        super(shapeCoordinates);
+    public Bullet(double cooldown, double movingSpeed, double livePoints, double damagePoints, CustomColor color, double... shapeCoordinates) {
+        super(color, shapeCoordinates);
         this.cooldown = cooldown;
         this.movingSpeed = movingSpeed;
         this.livePoints = livePoints;

@@ -1,14 +1,14 @@
 package dk.sdu.mmmi.cbse.playersystem;
 
+import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IWeaponUser;
 
 /**
  * Player: A player entity which can be controlled by the user
  */
-public class Player extends Entity implements IMoveable, IDestroyable, IWeaponUser {
+public class Player extends Entity implements IMoveable, IDestroyable {
     private double movingSpeed;
     private double livePoints;
     private double lastShotTime;
@@ -20,11 +20,27 @@ public class Player extends Entity implements IMoveable, IDestroyable, IWeaponUs
      * @param livePoints the live points of the player
      * @param shapeCoordinates the shape coordinates of the player
      */
-    Player(double movingSpeed, double livePoints, double... shapeCoordinates) {
-        super(shapeCoordinates);
+    Player(double movingSpeed, double livePoints, CustomColor color, double... shapeCoordinates) {
+        super(color, shapeCoordinates);
         this.movingSpeed = movingSpeed;
         this.livePoints = livePoints;
         this.lastShotTime = 0;
+    }
+
+    /**
+     * Determine if the entity is allowed to shoot, depending on the entity's weapon cooldown
+     * Set the last time the entity shot if the entity is allowed to shoot
+     *
+     * @param currentTimeInMillis the current time in milliseconds
+     * @return true if the entity is allowed to shoot, false otherwise
+     */
+    public boolean isAllowedToShoot(double cooldown, double currentTimeInMillis) {
+        if (cooldown < currentTimeInMillis - this.lastShotTime) {
+            this.lastShotTime = currentTimeInMillis;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -52,22 +68,10 @@ public class Player extends Entity implements IMoveable, IDestroyable, IWeaponUs
         this.livePoints = livePoints;
     }
 
-    @Override
-    public boolean isAllowedToShoot(double cooldown, double currentTimeInMillis) {
-        if (cooldown < currentTimeInMillis - this.lastShotTime) {
-            this.lastShotTime = currentTimeInMillis;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public void setLastShotTime(double lastShotTime) {
         this.lastShotTime = lastShotTime;
     }
 
-    @Override
     public double getLastShotTime() {
         return this.lastShotTime;
     }

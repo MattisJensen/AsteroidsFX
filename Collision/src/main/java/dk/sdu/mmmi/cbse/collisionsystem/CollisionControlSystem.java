@@ -4,8 +4,8 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IWeapon;
 import dk.sdu.mmmi.cbse.common.services.processing.IPostEntityProcessingService;
+import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
             }
         }
 
-        for (Entity entity : entitiesToRemove) {
+        for (Entity entity : this.entitiesToRemove) {
             world.removeEntity(entity);
         }
     }
@@ -63,10 +63,10 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
      * @return The damage the entity can deal.
      */
     private double calculateDamage(Entity entity) {
-        if (entity instanceof IWeapon) {
-            return ((IWeapon) entity).getCurrentDamage();
-        } else if (entity instanceof IDestroyable) {
-            return ((IDestroyable) entity).getLivePoints();
+        if (entity instanceof IWeapon weapon) {
+            return weapon.getCurrentDamage();
+        } else if (entity instanceof IDestroyable destroyable) {
+            return destroyable.getLivePoints();
         }
         return 0;
     }
@@ -78,8 +78,8 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
      * @param damage The amount of damage to apply.
      */
     private void applyDamage(Entity entity, double damage) {
-        if (entity instanceof IDestroyable) {
-            ((IDestroyable) entity).removeLivePoints(damage);
+        if (entity instanceof IDestroyable destroyable) {
+            destroyable.removeLivePoints(damage);
         }
     }
 
@@ -90,8 +90,8 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
      * @param entity The entity to check.
      */
     private void checkSurvival(Entity entity) {
-        if (entity instanceof IDestroyable) {
-            if (((IDestroyable) entity).getLivePoints() <= 0) {
+        if (entity instanceof IDestroyable destroyable) {
+            if (destroyable.getLivePoints() <= 0) {
                 this.entitiesToRemove.add(entity);
             }
         }
