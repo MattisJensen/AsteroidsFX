@@ -3,10 +3,10 @@ package dk.sdu.mmmi.cbse.main;
 import javafx.application.Application;
 
 /**
- * GameLauncher: Launches the game loop
+ * Main: Launches the game
  */
-public class GameLauncher {
+public class Main {
     public static void main(String[] args) {
-        Application.launch(GameLoopJavaFX.class);
+        Application.launch(GameLauncherJavaFX.class);
     }
 }

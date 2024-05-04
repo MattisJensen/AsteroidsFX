@@ -8,7 +8,6 @@ import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import dk.sdu.mmmi.cbse.common.services.processing.IPostEntityProcessingService;
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -25,21 +24,47 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.stream.Collectors.toList;
+/**
+ * GameLoopJavaFX: The game loop for the JavaFX version of the game.
+ */
+public class GameLoopJavaFX {
+    private final GameData gameData;
+    private final World world;
+    private final List<IGamePluginService> gamePluginServices;
+    private final List<IEntityProcessingService> entityProcessingServices;
+    private final List<IPostEntityProcessingService> postEntityProcessingServices;
 
-public class GameLoopJavaFX extends Application {
-    private GameData gameData = new GameData();
-    private final World world = new World();
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
     private double lastSystemTime = 0;
 
-    @Override
-    public void start(Stage window) throws Exception {
+    /**
+     * Constructor for the GameLoopJavaFX class.
+     *
+     * @param gameData The game data.
+     * @param world The game world.
+     * @param gamePluginServices The game plugin services.
+     * @param entityProcessingServices The entity processing services.
+     * @param postEntityProcessingServices The post entity processing services.
+     */
+    public GameLoopJavaFX(GameData gameData, World world, List<IGamePluginService> gamePluginServices, List<IEntityProcessingService> entityProcessingServices, List<IPostEntityProcessingService> postEntityProcessingServices) {
+        this.gameData = gameData;
+        this.world = world;
+        this.gamePluginServices = gamePluginServices;
+        this.entityProcessingServices = entityProcessingServices;
+        this.postEntityProcessingServices = postEntityProcessingServices;
+    }
+
+    /**
+     * Starts the game loop.
+     *
+     * @param window The stage to start the game loop on.
+     */
+    public void start(Stage window) {
         Text text = new Text(10, 20, "Destroyed asteroids: 0");
         text.setFill(Color.rgb(60, 60, 60));
         this.gameWindow.setPrefSize(this.gameData.getDisplayWidth(), this.gameData.getDisplayHeight());
@@ -218,7 +243,7 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the game plugin services.
      */
     private Collection<? extends IGamePluginService> getPluginServices() {
-        return ServiceLoader.load(IGamePluginService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return this.gamePluginServices;
     }
 
     /**
@@ -227,7 +252,7 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the entity processing services.
      */
     private Collection<? extends IEntityProcessingService> getEntityProcessingServices() {
-        return ServiceLoader.load(IEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return this.entityProcessingServices;
     }
 
     /**
@@ -236,6 +261,6 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the post entity processing services.
      */
     private Collection<? extends IPostEntityProcessingService> getPostEntityProcessingServices() {
-        return ServiceLoader.load(IPostEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return this.postEntityProcessingServices;
     }
 }

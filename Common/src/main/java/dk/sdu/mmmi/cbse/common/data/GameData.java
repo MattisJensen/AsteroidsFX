@@ -1,7 +1,5 @@
 package dk.sdu.mmmi.cbse.common.data;
 
-//@Component
-
 /**
  * GameData: Stores data about the game
  */
