@@ -7,6 +7,6 @@ import javafx.application.Application;
  */
 public class Main {
     public static void main(String[] args) {
-        Application.launch(GameLoopJavaFX.class);
+        Application.launch(GameLauncherJavaFX.class);
     }
 }
