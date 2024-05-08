@@ -2,13 +2,15 @@ package dk.sdu.mmmi.cbse.enemysystem;
 
 import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
+import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
 
 /**
  * Enemy: An enemy entity which can move, be destroyed, deal damage and use weapons
  */
-public class Enemy extends Entity implements IMoveable, IDestroyable {
+public class Enemy extends Entity implements ICollidable, IMoveable, IDestroyable {
     private double chanceToShoot;
     private double movingSpeed;
     private double livePoints;
@@ -43,6 +45,17 @@ public class Enemy extends Entity implements IMoveable, IDestroyable {
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void collision(World world, Entity entity) {
+        if (entity instanceof IDestroyable destroyable) {
+            destroyable.removeLivePoints(this.livePoints);
+
+            if (destroyable.getLivePoints() <= 0) {
+                world.removeEntity(entity);
+            }
         }
     }
 

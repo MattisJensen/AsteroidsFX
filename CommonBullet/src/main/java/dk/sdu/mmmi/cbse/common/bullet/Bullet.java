@@ -2,6 +2,8 @@ package dk.sdu.mmmi.cbse.common.bullet;
 
 import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
+import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
 import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
@@ -9,7 +11,7 @@ import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 /**
  * Bullet: A bullet entity which can be shot
  */
-public class Bullet extends Entity implements IWeapon, IMoveable, IDestroyable {
+public class Bullet extends Entity implements ICollidable, IWeapon, IMoveable, IDestroyable {
     private double cooldown;
     private double movingSpeed;
     private double livePoints;
@@ -30,6 +32,17 @@ public class Bullet extends Entity implements IWeapon, IMoveable, IDestroyable {
         this.movingSpeed = movingSpeed;
         this.livePoints = livePoints;
         this.damagePoints = damagePoints;
+    }
+
+    @Override
+    public void collision(World world, Entity entity) {
+        if (entity instanceof IDestroyable destroyable) {
+            destroyable.removeLivePoints(getCurrentDamage());
+
+            if (destroyable.getLivePoints() <= 0) {
+                world.removeEntity(entity);
+            }
+        }
     }
 
     @Override

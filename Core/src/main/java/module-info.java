@@ -10,5 +10,3 @@ module Core {
     uses IEntityProcessingService;
     uses IPostEntityProcessingService;
 }
-
-

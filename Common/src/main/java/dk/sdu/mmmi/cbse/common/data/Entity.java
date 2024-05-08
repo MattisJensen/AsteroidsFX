@@ -29,23 +29,16 @@ public class Entity implements Serializable {
         this.x = 0;
         this.y = 0;
         this.rotation = 0;
+        this.polygonCoordinates = polygonCoordinates;
 
-        setPolygonCoordinates(polygonCoordinates);
-    }
-
-    public String getID() {
-        return ID.toString();
+        setWidthByPolygon(polygonCoordinates);
+        setHeightByPolygon(polygonCoordinates);
     }
 
     /**
-     * Sets the polygon coordinates of the entity
-     * Sets the width and height of the entity based on the provided polygon coordinates
-     *
-     * @param coordinates The polygon coordinates
+     * Sets the width of the entity based on the provided polygon coordinates
      */
-    public void setPolygonCoordinates(double... coordinates) {
-        this.polygonCoordinates = coordinates;
-
+    public void setWidthByPolygon(double... coordinates) {
         double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
         for (int i = 0; i < this.polygonCoordinates.length; i += 2) {
             double x = this.polygonCoordinates[i];
@@ -53,7 +46,12 @@ public class Entity implements Serializable {
             maxX = Math.max(maxX, x);
         }
         this.width = maxX - minX;
+    }
 
+    /**
+     * Sets the height of the entity based on the provided polygon coordinates
+     */
+    public void setHeightByPolygon(double... coordinates) {
         double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
         for (int i = 1; i < this.polygonCoordinates.length; i += 2) {
             double y = this.polygonCoordinates[i];
@@ -61,6 +59,14 @@ public class Entity implements Serializable {
             maxY = Math.max(maxY, y);
         }
         this.height = maxY - minY;
+    }
+
+    public String getID() {
+        return ID.toString();
+    }
+
+    public void setPolygonCoordinates(double... coordinates) {
+        this.polygonCoordinates = coordinates;
     }
 
     public double[] getPolygonCoordinates() {

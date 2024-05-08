@@ -5,6 +5,7 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.GameKeys;
 import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
 import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 

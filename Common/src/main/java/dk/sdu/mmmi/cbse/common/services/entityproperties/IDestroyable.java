@@ -24,5 +24,4 @@ public interface IDestroyable {
      * @param livePoints the live points of the entity
      */
     void setLivePoints(double livePoints);
-
 }

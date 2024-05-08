@@ -2,13 +2,15 @@ package dk.sdu.mmmi.cbse.asteroidsystem;
 
 import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
+import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
 
 /**
  * Asteroid: An entity that can move and be destroyed
  */
-public class Asteroid extends Entity implements IMoveable, IDestroyable {
+public class Asteroid extends Entity implements ICollidable, IMoveable, IDestroyable {
     private int asteroidSize;
     private double movingSpeed;
     private double livePoints;
@@ -34,6 +36,17 @@ public class Asteroid extends Entity implements IMoveable, IDestroyable {
 
         this.rotationSpeed = rotationSpeed;
         this.initialRotation = 0;
+    }
+
+    @Override
+    public void collision(World world, Entity entity) {
+        if (entity instanceof IDestroyable destroyable) {
+            destroyable.removeLivePoints(this.livePoints);
+
+            if (destroyable.getLivePoints() <= 0) {
+                world.removeEntity(entity);
+            }
+        }
     }
 
     public double getInitialRotation() {

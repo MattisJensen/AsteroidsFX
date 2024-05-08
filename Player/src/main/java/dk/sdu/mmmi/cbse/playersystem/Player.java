@@ -2,13 +2,15 @@ package dk.sdu.mmmi.cbse.playersystem;
 
 import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
+import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
 
 /**
  * Player: A player entity which can be controlled by the user
  */
-public class Player extends Entity implements IMoveable, IDestroyable {
+public class Player extends Entity implements ICollidable, IMoveable, IDestroyable {
     private double movingSpeed;
     private double livePoints;
     private double lastShotTime;
@@ -40,6 +42,17 @@ public class Player extends Entity implements IMoveable, IDestroyable {
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void collision(World world, Entity entity) {
+        if (entity instanceof IDestroyable destroyable) {
+            destroyable.removeLivePoints(this.livePoints);
+
+            if (destroyable.getLivePoints() <= 0) {
+               world.removeEntity(entity);
+            }
         }
     }
 
