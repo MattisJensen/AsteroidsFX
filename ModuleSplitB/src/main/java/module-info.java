@@ -1,7 +1,7 @@
 import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.split.SplitProcessingService;
 
-module ModuleSplitA {
+module ModuleSplitB {
     requires Common;
     provides IEntityProcessingService with SplitProcessingService;
 }

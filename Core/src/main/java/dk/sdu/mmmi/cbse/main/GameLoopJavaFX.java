@@ -24,6 +24,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -40,10 +41,12 @@ public class GameLoopJavaFX extends Application {
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
     private double lastSystemTime = 0;
+    private static ModuleLayer layer;
 
     @Override
     public void start(Stage window) throws Exception {
         this.gameWindow.setPrefSize(this.gameData.getDisplayWidth(), this.gameData.getDisplayHeight());
+        layer = JPMSHandler.createModuleLayer(Paths.get("plugins"));
 
         // Create background
         Background background = getBackground();
@@ -228,7 +231,7 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the game plugin services.
      */
     private Collection<? extends IGamePluginService> getPluginServices() {
-        return ServiceLoader.load(IGamePluginService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return ServiceLoader.load(layer, IGamePluginService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
 
     /**
@@ -237,7 +240,7 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the entity processing services.
      */
     private Collection<? extends IEntityProcessingService> getEntityProcessingServices() {
-        return ServiceLoader.load(IEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return ServiceLoader.load(layer, IEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
     }
 
     /**
@@ -246,7 +249,7 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the post entity processing services.
      */
     private Collection<? extends IPostEntityProcessingService> getPostEntityProcessingServices() {
-        return ServiceLoader.load(IPostEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return ServiceLoader.load(layer, IPostEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
 
     }
 }
