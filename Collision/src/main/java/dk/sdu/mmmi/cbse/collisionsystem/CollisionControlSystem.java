@@ -42,14 +42,15 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
     /**
      * Checks if two entities are colliding.
      *
-     * @param e1 The first entity.
-     * @param e2 The second entity.
+     * @param entity1 The first entity.
+     * @param entity2 The second entity.
      * @return True if the entities are colliding, false otherwise.
      */
-    public boolean isCollision(Entity e1, Entity e2) {
+    public boolean isCollision(Entity entity1, Entity entity2) {
         // distance between the two entities
-        double distance = Math.sqrt(Math.pow(e2.getCenterXCoordinate() - e1.getCenterXCoordinate(), 2) + Math.pow(e2.getCenterYCoordinate() - e1.getCenterYCoordinate(), 2));
+        double distance = Math.sqrt(Math.pow(entity2.getCenterXCoordinate() - entity1.getCenterXCoordinate(), 2) + Math.pow(entity2.getCenterYCoordinate() - entity1.getCenterYCoordinate(), 2));
 
-        return distance < (e1.getWidth() / 2) + (e2.getWidth() / 2);
+        // collision if the distance between the two entities is less than the sum of their radius
+        return distance < (entity1.getWidth() / 2) + (entity2.getWidth() / 2);
     }
 }
