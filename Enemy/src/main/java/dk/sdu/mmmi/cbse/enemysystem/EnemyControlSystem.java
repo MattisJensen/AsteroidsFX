@@ -44,7 +44,7 @@ public class EnemyControlSystem implements IEntityProcessingService {
 
         for (BulletSPI bulletSPI : getBulletSPIs()) {
             Entity bullet = bulletSPI.createBullet(this.gameData, enemy);
-            if (enemy.isAllowedToShoot(400, System.currentTimeMillis())) {
+            if (enemy.isAllowedToShoot(300, System.currentTimeMillis())) {
                 this.world.addEntity(bullet);
             }
             break;

@@ -43,7 +43,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
 
         for (BulletSPI bulletSPI : getBulletSPIs()) {
             Entity bullet = bulletSPI.createBullet(this.gameData, player);
-            if (player.isAllowedToShoot(400, System.currentTimeMillis())) {
+            if (player.isAllowedToShoot(200, System.currentTimeMillis())) {
                 this.world.addEntity(bullet);
             }
         }

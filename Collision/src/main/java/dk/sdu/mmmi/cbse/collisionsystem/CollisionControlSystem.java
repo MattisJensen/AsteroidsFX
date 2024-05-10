@@ -6,7 +6,6 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
 import dk.sdu.mmmi.cbse.common.services.processing.IPostEntityProcessingService;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**

@@ -20,6 +20,7 @@ public class Entity implements Serializable {
     /**
      * Constructor for Entity
      *
+     * @param color              The color of the entity
      * @param polygonCoordinates The polygon coordinates
      */
     public Entity(CustomColor color, double... polygonCoordinates) {
