@@ -7,23 +7,31 @@ import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
 import dk.sdu.mmmi.cbse.common.services.processing.IPostEntityProcessingService;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * CollisionControlSystem: Detects collisions between entities and removes them if they are able to deal damage and take damage.
  */
 public class CollisionControlSystem implements IPostEntityProcessingService {
     Collection<Entity> entities;
+    HashMap<Entity, Entity> collidedEntities;
 
     @Override
     public void process(GameData gameData, World world) {
         this.entities = world.getEntities();
+        this.collidedEntities = new HashMap<>();
 
         for (Entity entity1 : this.entities) {
             if (entity1 instanceof ICollidable collidable1) {
 
                 for (Entity entity2 : this.entities) {
-                    // Skip if the entities are the same
+                    // Skip of collision check if the entities are the same
                     if (entity1 == entity2) {
+                        continue;
+                    }
+
+                    // Skip of collision check if the entities have collided already
+                    if (collidedEntities.containsKey(entity2) && collidedEntities.get(entity2) == entity1) {
                         continue;
                     }
 
@@ -32,6 +40,7 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
                         if (isCollision(entity1, entity2)) {
                             collidable1.collision(world, entity2);
                             collidable2.collision(world, entity1);
+                            collidedEntities.put(entity1, entity2);
                         }
                     }
                 }
