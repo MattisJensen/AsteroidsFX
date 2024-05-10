@@ -8,7 +8,7 @@ import dk.sdu.mmmi.cbse.common.data.World;
  */
 public interface ICollidable {
     /**
-     * Handle what happens to the entity when a collision occurs
+     * Handles what happens to the given entity when a collision occurs with the current entity
      *
      * @param entity The entity to collide with, which will be affected by the collision
      */

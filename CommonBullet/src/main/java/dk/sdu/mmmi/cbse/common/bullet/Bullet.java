@@ -6,12 +6,11 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
-import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 /**
  * Bullet: A bullet entity which can be shot
  */
-public class Bullet extends Entity implements ICollidable, IWeapon, IMoveable, IDestroyable {
+public class Bullet extends Entity implements ICollidable, IMoveable, IDestroyable {
     private double cooldown;
     private double movingSpeed;
     private double livePoints;
@@ -20,10 +19,11 @@ public class Bullet extends Entity implements ICollidable, IWeapon, IMoveable, I
     /**
      * Constructor for the Bullet
      *
-     * @param cooldown the time in milliseconds that the bullet needs to wait before it can be fired again
-     * @param movingSpeed the speed at which the bullet moves
-     * @param livePoints the amount of health the bullet has
-     * @param damagePoints the amount of damage the bullet deals
+     * @param cooldown         the time in milliseconds that the bullet needs to wait before it can be fired again
+     * @param movingSpeed      the speed at which the bullet moves
+     * @param livePoints       the amount of health the bullet has
+     * @param damagePoints     the amount of damage the bullet deals
+     * @param color            the color of the bullet
      * @param shapeCoordinates the coordinates defining the shape of the bullet
      */
     public Bullet(double cooldown, double movingSpeed, double livePoints, double damagePoints, CustomColor color, double... shapeCoordinates) {
@@ -43,6 +43,15 @@ public class Bullet extends Entity implements ICollidable, IWeapon, IMoveable, I
                 world.removeEntity(entity);
             }
         }
+    }
+
+    /**
+     * Get the current damage points of the entity, which depends on the entity's moving speed and raw damage points
+     *
+     * @return the current damage points of the entity
+     */
+    public double getCurrentDamage() {
+        return this.damagePoints + this.movingSpeed * 1.2;
     }
 
     @Override
@@ -70,27 +79,18 @@ public class Bullet extends Entity implements ICollidable, IWeapon, IMoveable, I
         this.livePoints = livePoints;
     }
 
-    @Override
-    public double getCurrentDamage() {
-        return this.damagePoints + this.movingSpeed * 1.2;
-    }
-
-    @Override
     public double getDamagePoints() {
         return this.damagePoints;
     }
 
-    @Override
     public void setDamagePoints(double damagePoints) {
         this.damagePoints = damagePoints;
     }
 
-    @Override
     public void setCooldown(double cooldown) {
         this.cooldown = cooldown;
     }
 
-    @Override
     public double getCooldown() {
         return this.cooldown;
     }

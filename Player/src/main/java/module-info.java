@@ -7,8 +7,7 @@ import dk.sdu.mmmi.cbse.playersystem.PlayerPlugin;
 
 module Player {
     requires Common;
-    requires CommonWeapon;
-    requires CommonBullet;   
+    requires CommonBullet;
     uses BulletSPI;
     provides IGamePluginService with PlayerPlugin;
     provides IEntityProcessingService with PlayerControlSystem;

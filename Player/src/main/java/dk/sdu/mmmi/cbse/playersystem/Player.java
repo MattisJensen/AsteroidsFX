@@ -18,8 +18,9 @@ public class Player extends Entity implements ICollidable, IMoveable, IDestroyab
     /**
      * Constructor for the Player
      *
-     * @param movingSpeed the moving speed of the player
-     * @param livePoints the live points of the player
+     * @param movingSpeed      the moving speed of the player
+     * @param livePoints       the live points of the player
+     * @param color            the color of the player
      * @param shapeCoordinates the shape coordinates of the player
      */
     Player(double movingSpeed, double livePoints, CustomColor color, double... shapeCoordinates) {
@@ -33,6 +34,7 @@ public class Player extends Entity implements ICollidable, IMoveable, IDestroyab
      * Determine if the entity is allowed to shoot, depending on the entity's weapon cooldown
      * Set the last time the entity shot if the entity is allowed to shoot
      *
+     * @param cooldown            the interval in milliseconds that the entity needs to wait before it can shoot again
      * @param currentTimeInMillis the current time in milliseconds
      * @return true if the entity is allowed to shoot, false otherwise
      */
@@ -51,7 +53,7 @@ public class Player extends Entity implements ICollidable, IMoveable, IDestroyab
             destroyable.removeLivePoints(this.livePoints);
 
             if (destroyable.getLivePoints() <= 0) {
-               world.removeEntity(entity);
+                world.removeEntity(entity);
             }
         }
     }

@@ -19,9 +19,10 @@ public class Enemy extends Entity implements ICollidable, IMoveable, IDestroyabl
     /**
      * Constructor for the Enemy
      *
-     * @param chanceToShoot the chance to shoot of the enemy (0.0 to 1.0)
-     * @param movingSpeed the moving speed of the enemy
-     * @param livePoints the live points of the enemy
+     * @param chanceToShoot      the chance to shoot of the enemy (0.0 to 1.0)
+     * @param movingSpeed        the moving speed of the enemy
+     * @param livePoints         the live points of the enemy
+     * @param color              the color of the enemy
      * @param polygonCoordinates the polygon coordinates of the enemy
      */
     public Enemy(double chanceToShoot, double movingSpeed, double livePoints, CustomColor color, double... polygonCoordinates) {
@@ -36,6 +37,7 @@ public class Enemy extends Entity implements ICollidable, IMoveable, IDestroyabl
      * Determine if the entity is allowed to shoot, depending on the entity's weapon cooldown
      * Set the last time the entity shot if the entity is allowed to shoot
      *
+     * @param cooldown            the interval in milliseconds that the entity needs to wait before it can shoot again
      * @param currentTimeInMillis the current time in milliseconds
      * @return true if the entity is allowed to shoot, false otherwise
      */

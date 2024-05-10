@@ -5,9 +5,7 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.GameKeys;
 import dk.sdu.mmmi.cbse.common.data.World;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
 import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
-import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 import java.util.Collection;
 import java.util.ServiceLoader;
@@ -39,13 +37,14 @@ public class PlayerControlSystem implements IEntityProcessingService {
      * @param player The player entity
      */
     public void shootIfPossible(Player player) {
-        if (this.gameData.getKeys().isDown(GameKeys.SPACE)) {
-            BulletSPI bulletSPI = getBulletSPIs().stream().findFirst().orElse(null);
-            if (bulletSPI != null) {
-                Entity bullet = bulletSPI.createBullet(this.gameData, player);
-                if (bullet instanceof IWeapon && player.isAllowedToShoot(((IWeapon) bullet).getCooldown(), System.currentTimeMillis())) {
-                    this.world.addEntity(bullet);
-                }
+        if (!this.gameData.getKeys().isDown(GameKeys.SPACE)) {
+            return;
+        }
+
+        for (BulletSPI bulletSPI : getBulletSPIs()) {
+            Entity bullet = bulletSPI.createBullet(this.gameData, player);
+            if (player.isAllowedToShoot(400, System.currentTimeMillis())) {
+                this.world.addEntity(bullet);
             }
         }
     }

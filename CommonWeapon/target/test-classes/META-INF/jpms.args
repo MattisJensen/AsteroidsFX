@@ -1,4 +1,0 @@
---patch-module
-CommonWeapon=_
---add-reads
-CommonWeapon=ALL-UNNAMED

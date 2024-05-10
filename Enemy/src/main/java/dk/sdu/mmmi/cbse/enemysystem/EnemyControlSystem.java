@@ -5,7 +5,6 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
-import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 import java.util.Collection;
 import java.util.Random;
@@ -34,6 +33,7 @@ public class EnemyControlSystem implements IEntityProcessingService {
      * Shoots a bullet if the enemy is allowed to shoot
      * Moreover the enemy shot is based on a random number
      *
+     *
      * @param enemy The enemy entity
      */
     public void shootIfPossible(Enemy enemy) {
@@ -44,10 +44,8 @@ public class EnemyControlSystem implements IEntityProcessingService {
 
         for (BulletSPI bulletSPI : getBulletSPIs()) {
             Entity bullet = bulletSPI.createBullet(this.gameData, enemy);
-            if (bullet instanceof IWeapon weaponBullet) {
-                if (enemy.isAllowedToShoot(weaponBullet.getCooldown(), System.currentTimeMillis())) {
-                    this.world.addEntity(bullet);
-                }
+            if (enemy.isAllowedToShoot(400, System.currentTimeMillis())) {
+                this.world.addEntity(bullet);
             }
             break;
         }

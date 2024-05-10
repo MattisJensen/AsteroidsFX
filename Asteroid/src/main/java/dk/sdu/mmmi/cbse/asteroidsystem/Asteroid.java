@@ -24,6 +24,8 @@ public class Asteroid extends Entity implements ICollidable, IMoveable, IDestroy
      * @param asteroidSize     the size of the asteroid
      * @param movingSpeed      the moving speed of the asteroid
      * @param livePoints       the live points of the asteroid
+     * @param rotationSpeed    the speed at which the asteroid rotates around itself
+     * @param color            the color of the asteroid
      * @param shapeCoordinates the shape coordinates of the asteroid
      */
     public Asteroid(int asteroidSize, double movingSpeed, double livePoints, double rotationSpeed, CustomColor color, double... shapeCoordinates) {

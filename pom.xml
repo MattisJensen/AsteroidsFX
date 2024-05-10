@@ -19,7 +19,6 @@
         <module>Enemy</module>
         <module>Asteroid</module>
         <module>Collision</module>
-        <module>CommonWeapon</module>
     </modules>
 
     <properties>

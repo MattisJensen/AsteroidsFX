@@ -4,9 +4,7 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.entityproperties.ICollidable;
-import dk.sdu.mmmi.cbse.common.services.entityproperties.IDestroyable;
 import dk.sdu.mmmi.cbse.common.services.processing.IPostEntityProcessingService;
-import dk.sdu.mmmi.cbse.common.weapon.IWeapon;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +14,6 @@ import java.util.Collection;
  */
 public class CollisionControlSystem implements IPostEntityProcessingService {
     Collection<Entity> entities;
-    ArrayList<Entity> entitiesToRemove;
 
     @Override
     public void process(GameData gameData, World world) {
