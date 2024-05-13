@@ -7,6 +7,7 @@ import dk.sdu.mmmi.cbse.playersystem.PlayerPlugin;
 module Player {
     requires Common;
     requires CommonBullet;
+    requires java.net.http;
     uses BulletSPI;
     provides IGamePluginService with PlayerPlugin;
     provides IEntityProcessingService with PlayerControlSystem;

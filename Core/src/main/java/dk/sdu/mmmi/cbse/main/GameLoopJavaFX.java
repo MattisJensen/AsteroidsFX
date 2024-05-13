@@ -22,6 +22,13 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -40,14 +47,18 @@ public class GameLoopJavaFX {
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
     private double lastSystemTime = 0;
+    private Text scoreText;
+    private final URL scoreGetURL;
+    private final HttpClient httpClient;
+
 
     /**
      * Constructor for the GameLoopJavaFX class.
      *
-     * @param gameData The game data.
-     * @param world The game world.
-     * @param gamePluginServices The game plugin services.
-     * @param entityProcessingServices The entity processing services.
+     * @param gameData                     The game data.
+     * @param world                        The game world.
+     * @param gamePluginServices           The game plugin services.
+     * @param entityProcessingServices     The entity processing services.
      * @param postEntityProcessingServices The post entity processing services.
      */
     public GameLoopJavaFX(GameData gameData, World world, List<IGamePluginService> gamePluginServices, List<IEntityProcessingService> entityProcessingServices, List<IPostEntityProcessingService> postEntityProcessingServices) {
@@ -56,6 +67,14 @@ public class GameLoopJavaFX {
         this.gamePluginServices = gamePluginServices;
         this.entityProcessingServices = entityProcessingServices;
         this.postEntityProcessingServices = postEntityProcessingServices;
+
+        try {
+            this.scoreGetURL = new URL("http://localhost:8080/scoresystem/score/get");
+            this.httpClient = HttpClient.newHttpClient();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Failed to create URL for getting score of player. " + e);
+
+        }
     }
 
     /**
@@ -64,9 +83,13 @@ public class GameLoopJavaFX {
      * @param window The stage to start the game loop on.
      */
     public void start(Stage window) {
-        Text text = new Text(10, 20, "Destroyed asteroids: 0");
-        text.setFill(Color.rgb(60, 60, 60));
         this.gameWindow.setPrefSize(this.gameData.getDisplayWidth(), this.gameData.getDisplayHeight());
+
+        // Create score text
+        this.scoreText = new Text(10, 20, "");
+        this.scoreText.setFill(Color.rgb(190, 190, 190));
+        this.gameWindow.getChildren().add(this.scoreText);
+        updateScoreText();
 
         // Create background
         Background background = getBackground();
@@ -123,6 +146,7 @@ public class GameLoopJavaFX {
 
         removeDeletedEntities();
         addNewEntitiesToWindow();
+        updateScoreText();
     }
 
     /**
@@ -162,6 +186,9 @@ public class GameLoopJavaFX {
                     this.gameWindow.getChildren().remove(p);
                 }
                 this.polygons.remove(entity);
+
+                // Score may only have been updated if an entity was removed
+                updateScoreText();
             }
         }
     }
@@ -184,6 +211,37 @@ public class GameLoopJavaFX {
                 this.polygons.put(entity, polygon);
                 this.gameWindow.getChildren().add(polygon);
             }
+        }
+    }
+
+    /**
+     * Draws the entities of the game.
+     */
+    private void draw() {
+        for (Entity entity : this.world.getEntities()) {
+            Polygon polygon = this.polygons.get(entity);
+            polygon.setTranslateX(entity.getXCoordinate());
+            polygon.setTranslateY(entity.getYCoordinate());
+            polygon.setRotate(entity.getRotation());
+
+        }
+    }
+
+    /**
+     * Updates the score text.
+     */
+    public void updateScoreText() {
+        URI scoreURI = URI.create(this.scoreGetURL.toString());
+
+        HttpRequest requestAddToScore = HttpRequest.newBuilder()
+                .uri(scoreURI).GET().build();
+
+        // Send the request
+        try {
+            HttpResponse<String> score = this.httpClient.send(requestAddToScore, HttpResponse.BodyHandlers.ofString());
+            this.scoreText.setText("Your score: " + score.body());
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Failed to get score");
         }
     }
 
