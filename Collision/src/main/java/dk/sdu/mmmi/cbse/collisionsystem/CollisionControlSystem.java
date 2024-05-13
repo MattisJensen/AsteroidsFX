@@ -14,12 +14,12 @@ import java.util.HashMap;
  */
 public class CollisionControlSystem implements IPostEntityProcessingService {
     Collection<Entity> entities;
-    HashMap<Entity, Entity> collidedEntities;
+    HashMap<Entity, Entity> checkedEntities;
 
     @Override
     public void process(GameData gameData, World world) {
         this.entities = world.getEntities();
-        this.collidedEntities = new HashMap<>();
+        this.checkedEntities = new HashMap<>();
 
         for (Entity entity1 : this.entities) {
             if (entity1 instanceof ICollidable collidable1) {
@@ -31,7 +31,7 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
                     }
 
                     // Skip of collision check if the entities have collided already
-                    if (collidedEntities.containsKey(entity2) && collidedEntities.get(entity2) == entity1) {
+                    if (this.checkedEntities.containsKey(entity2) && this.checkedEntities.get(entity2) == entity1) {
                         continue;
                     }
 
@@ -40,9 +40,10 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
                         if (isCollision(entity1, entity2)) {
                             collidable1.collision(world, entity2);
                             collidable2.collision(world, entity1);
-                            collidedEntities.put(entity1, entity2);
                         }
                     }
+
+                    this.checkedEntities.put(entity1, entity2);
                 }
             }
         }

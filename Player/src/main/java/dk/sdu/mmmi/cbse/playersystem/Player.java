@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.cbse.playersystem;
 
+import dk.sdu.mmmi.cbse.common.bullet.Bullet;
 import dk.sdu.mmmi.cbse.common.data.CustomColor;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.World;
@@ -53,9 +54,14 @@ public class Player extends Entity implements ICollidable, IMoveable, IDestroyab
             destroyable.removeLivePoints(this.livePoints);
 
             if (destroyable.getLivePoints() <= 0) {
-                world.removeEntity(entity);
+                destroy(world, entity);
             }
         }
+    }
+
+    @Override
+    public void destroy(World world, Entity entity) {
+        world.removeEntity(entity);
     }
 
     @Override

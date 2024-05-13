@@ -43,24 +43,10 @@ public class GameLoopJavaFX extends Application {
 
     @Override
     public void start(Stage window) throws Exception {
-        Text text = new Text(10, 20, "Destroyed asteroids: 0");
-        text.setFill(Color.rgb(60, 60, 60));
         this.gameWindow.setPrefSize(this.gameData.getDisplayWidth(), this.gameData.getDisplayHeight());
-        this.gameWindow.getChildren().add(text);
 
-        // Set background color
-        LinearGradient linearGradient = new LinearGradient(
-                0, // start X
-                0, // start Y
-                1, // end X
-                1, // end Y
-                true, // proportional
-                CycleMethod.NO_CYCLE, // cycle colors
-                new Stop(0.1, Color.rgb(47, 0, 60)), // stops
-                new Stop(1.0, Color.rgb(33, 0, 77))
-        );
-        BackgroundFill backgroundFill = new BackgroundFill(linearGradient, CornerRadii.EMPTY, Insets.EMPTY);
-        Background background = new Background(backgroundFill);
+        // Create background
+        Background background = getBackground();
         this.gameWindow.setBackground(background);
 
         // Create game scene
@@ -176,6 +162,27 @@ public class GameLoopJavaFX extends Application {
             polygon.setRotate(entity.getRotation());
 
         }
+    }
+
+    /**
+     * Creates the background of the game.
+     *
+     * @return The background of the game.
+     */
+    private static Background getBackground() {
+        LinearGradient linearGradient = new LinearGradient(
+                0, // start X
+                0, // start Y
+                1, // end X
+                1, // end Y
+                true, // proportional
+                CycleMethod.NO_CYCLE, // cycle colors
+                new Stop(0.1, Color.rgb(47, 0, 60)), // stops
+                new Stop(1.0, Color.rgb(33, 0, 77))
+        );
+        BackgroundFill backgroundFill = new BackgroundFill(linearGradient, CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(backgroundFill);
+        return background;
     }
 
     /**

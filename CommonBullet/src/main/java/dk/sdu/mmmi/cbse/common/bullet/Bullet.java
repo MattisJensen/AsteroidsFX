@@ -11,6 +11,7 @@ import dk.sdu.mmmi.cbse.common.services.entityproperties.IMoveable;
  * Bullet: A bullet entity which can be shot
  */
 public class Bullet extends Entity implements ICollidable, IMoveable, IDestroyable {
+    private Entity shotBy;
     private double cooldown;
     private double movingSpeed;
     private double livePoints;
@@ -26,8 +27,9 @@ public class Bullet extends Entity implements ICollidable, IMoveable, IDestroyab
      * @param color            the color of the bullet
      * @param shapeCoordinates the coordinates defining the shape of the bullet
      */
-    public Bullet(double cooldown, double movingSpeed, double livePoints, double damagePoints, CustomColor color, double... shapeCoordinates) {
+    public Bullet(Entity shotBy, double cooldown, double movingSpeed, double livePoints, double damagePoints, CustomColor color, double... shapeCoordinates) {
         super(color, shapeCoordinates);
+        this.shotBy = shotBy;
         this.cooldown = cooldown;
         this.movingSpeed = movingSpeed;
         this.livePoints = livePoints;
@@ -40,9 +42,27 @@ public class Bullet extends Entity implements ICollidable, IMoveable, IDestroyab
             destroyable.removeLivePoints(getCurrentDamage());
 
             if (destroyable.getLivePoints() <= 0) {
-                world.removeEntity(entity);
+                destroy(world, entity);
             }
         }
+    }
+
+    @Override
+    public void destroy(World world, Entity entity) {
+        // Destruction by collision of two bullets doesn't need to be handled by the shooter
+        if (entity instanceof Bullet) {
+            world.removeEntity(entity);
+            return;
+        }
+
+        // If bullet destroys the entity, the shooter should handle the destruction of the entity
+        if (this.shotBy instanceof ICollidable shooter) {
+            shooter.destroy(world, entity);
+            return;
+        }
+
+        // If no shooter, just remove the entity
+        world.removeEntity(entity);
     }
 
     /**
@@ -52,6 +72,14 @@ public class Bullet extends Entity implements ICollidable, IMoveable, IDestroyab
      */
     public double getCurrentDamage() {
         return this.damagePoints + this.movingSpeed * 1.2;
+    }
+
+    public Entity getShotBy() {
+        return shotBy;
+    }
+
+    public void setShotBy(Entity shotBy) {
+        this.shotBy = shotBy;
     }
 
     @Override

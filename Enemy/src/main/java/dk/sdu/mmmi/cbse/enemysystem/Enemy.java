@@ -56,9 +56,14 @@ public class Enemy extends Entity implements ICollidable, IMoveable, IDestroyabl
             destroyable.removeLivePoints(this.livePoints);
 
             if (destroyable.getLivePoints() <= 0) {
-                world.removeEntity(entity);
+                destroy(world, entity);
             }
         }
+    }
+
+    @Override
+    public void destroy(World world, Entity entity) {
+        world.removeEntity(entity);
     }
 
     public double getChanceToShoot() {

@@ -13,4 +13,12 @@ public interface ICollidable {
      * @param entity The entity to collide with, which will be affected by the collision
      */
     void collision(World world, Entity entity);
+
+    /**
+     * Handles what happens to the given entity when it is destroyed.
+     * This should be same entity as the one that was collided with in {@code collision}.
+     *
+     * @param entity The entity to destroy
+     */
+    void destroy(World world, Entity entity);
 }
