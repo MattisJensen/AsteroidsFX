@@ -42,26 +42,26 @@ public class Bullet extends Entity implements ICollidable, IMoveable, IDestroyab
             destroyable.removeLivePoints(getCurrentDamage());
 
             if (destroyable.getLivePoints() <= 0) {
-                destroy(world, entity);
+                collisionRemoval(world, entity);
             }
         }
     }
 
     @Override
-    public void destroy(World world, Entity entity) {
-        // Destruction by collision of two bullets doesn't need to be handled by the shooter
+    public void collisionRemoval(World world, Entity entity) {
+        // collision removal with collision of two bullets doesn't need to be handled by the shooter
         if (entity instanceof Bullet) {
             world.removeEntity(entity);
             return;
         }
 
-        // If bullet destroys the entity, the shooter should handle the destruction of the entity
+        // If bullet destroys the entity, the shooter should handle the collision removal of the destroyed entity
         if (this.shotBy instanceof ICollidable shooter) {
-            shooter.destroy(world, entity);
+            shooter.collisionRemoval(world, entity);
             return;
         }
 
-        // If no shooter, just remove the entity
+        // When not handled until here, handle removal
         world.removeEntity(entity);
     }
 

@@ -21,29 +21,28 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
         this.entities = world.getEntities();
         this.checkedEntities = new HashMap<>();
 
+        // only keep ICollidable entities
+        this.entities.removeIf(entity -> !(entity instanceof ICollidable));
+
         for (Entity entity1 : this.entities) {
-            if (entity1 instanceof ICollidable collidable1) {
-
-                for (Entity entity2 : this.entities) {
-                    // Skip of collision check if the entities are the same
-                    if (entity1 == entity2) {
-                        continue;
-                    }
-
-                    // Skip of collision check if the entities have collided already
-                    if (this.checkedEntities.containsKey(entity2) && this.checkedEntities.get(entity2) == entity1) {
-                        continue;
-                    }
-
-                    if (entity2 instanceof ICollidable collidable2) {
-                        // Apply collision if the entities are colliding
-                        if (isCollision(entity1, entity2)) {
-                            collidable1.collision(world, entity2);
-                            collidable2.collision(world, entity1);
-                        }
-                    }
-
+            for (Entity entity2 : this.entities) {
+                // Skip of collision check if the entities have been checked already
+                if (this.checkedEntities.containsKey(entity2) && this.checkedEntities.get(entity2) == entity1) {
+                    continue;
+                } else {
+                    // Else add the new entities to the checked entities
                     this.checkedEntities.put(entity1, entity2);
+                }
+
+                // Skip of collision check if the entities are the same
+                if (entity1 == entity2) {
+                    continue;
+                }
+
+                // Apply collision if the entities are colliding
+                if (isCollision(entity1, entity2)) {
+                    ((ICollidable) entity1).collision(world, entity2);
+                    ((ICollidable) entity2).collision(world, entity1);
                 }
             }
         }

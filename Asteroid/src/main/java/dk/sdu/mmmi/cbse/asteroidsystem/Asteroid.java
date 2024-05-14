@@ -46,13 +46,13 @@ public class Asteroid extends Entity implements ICollidable, IMoveable, IDestroy
             destroyable.removeLivePoints(this.livePoints);
 
             if (destroyable.getLivePoints() <= 0) {
-                destroy(world, entity);
+                collisionRemoval(world, entity);
             }
         }
     }
 
     @Override
-    public void destroy(World world, Entity entity) {
+    public void collisionRemoval(World world, Entity entity) {
         world.removeEntity(entity);
     }
 
