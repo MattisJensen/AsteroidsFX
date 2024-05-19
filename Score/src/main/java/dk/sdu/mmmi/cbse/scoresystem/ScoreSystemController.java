@@ -1,6 +1,5 @@
 package dk.sdu.mmmi.cbse.scoresystem;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,10 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/scoresystem")
 public class ScoreSystemController {
     private long score = 0;
-
-    public static void main(String[] args) {
-        SpringApplication.run(ScoreSystemController.class, args);
-    }
 
     @GetMapping("/score/get")
     public long getScore() {
