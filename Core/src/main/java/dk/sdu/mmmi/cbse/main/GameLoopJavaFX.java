@@ -21,7 +21,6 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Polygon;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Collection;
@@ -103,11 +102,24 @@ public class GameLoopJavaFX extends Application {
     }
 
     /**
+     * Draws the entities of the game.
+     */
+    private void draw() {
+        for (Entity entity : this.world.getEntities()) {
+            Polygon polygon = this.polygons.get(entity);
+            polygon.setTranslateX(entity.getXCoordinate());
+            polygon.setTranslateY(entity.getYCoordinate());
+            polygon.setRotate(entity.getRotation());
+
+        }
+    }
+
+    /**
      * Updates the delta game time.
      *
      * @param currentTimeInMilliseconds The current time in milliseconds.
      */
-    public void updateDeltaGameTime(double currentTimeInMilliseconds) {
+    private void updateDeltaGameTime(double currentTimeInMilliseconds) {
         if (lastSystemTime == 0) {
             lastSystemTime = currentTimeInMilliseconds;
         }
@@ -118,7 +130,7 @@ public class GameLoopJavaFX extends Application {
     /**
      * Removes deleted entities from the game window and the polygons map.
      */
-    public void removeDeletedEntities() {
+    private void removeDeletedEntities() {
         for (Entity entity : this.polygons.keySet()) {
             if (!this.world.getEntities().contains(entity)) {
                 Polygon p = this.polygons.get(entity);
@@ -133,7 +145,7 @@ public class GameLoopJavaFX extends Application {
     /**
      * Adds new entities to the game window and the corresponding polygon to the polygons map.
      */
-    public void addNewEntitiesToWindow() {
+    private void addNewEntitiesToWindow() {
         for (Entity entity : this.world.getEntities()) {
             if (!this.polygons.containsKey(entity)) {
                 Polygon polygon = new Polygon(entity.getPolygonCoordinates());
@@ -148,19 +160,6 @@ public class GameLoopJavaFX extends Application {
                 this.polygons.put(entity, polygon);
                 this.gameWindow.getChildren().add(polygon);
             }
-        }
-    }
-
-    /**
-     * Draws the entities of the game.
-     */
-    private void draw() {
-        for (Entity entity : this.world.getEntities()) {
-            Polygon polygon = this.polygons.get(entity);
-            polygon.setTranslateX(entity.getXCoordinate());
-            polygon.setTranslateY(entity.getYCoordinate());
-            polygon.setRotate(entity.getRotation());
-
         }
     }
 
@@ -190,7 +189,7 @@ public class GameLoopJavaFX extends Application {
      *
      * @param scene The scene to set the key check for.
      */
-    public void setKeyEvents(Scene scene) {
+    private void setKeyEvents(Scene scene) {
         scene.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.LEFT)) {
                 this.gameData.getKeys().setKey(GameKeys.LEFT, true);
@@ -228,7 +227,10 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the game plugin services.
      */
     private Collection<? extends IGamePluginService> getPluginServices() {
-        return ServiceLoader.load(IGamePluginService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return ServiceLoader.load(IGamePluginService.class)
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .collect(toList());
     }
 
     /**
@@ -237,7 +239,10 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the entity processing services.
      */
     private Collection<? extends IEntityProcessingService> getEntityProcessingServices() {
-        return ServiceLoader.load(IEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        return ServiceLoader.load(IEntityProcessingService.class)
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .collect(toList());
     }
 
     /**
@@ -246,7 +251,9 @@ public class GameLoopJavaFX extends Application {
      * @return A collection of all the post entity processing services.
      */
     private Collection<? extends IPostEntityProcessingService> getPostEntityProcessingServices() {
-        return ServiceLoader.load(IPostEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
-
+        return ServiceLoader.load(IPostEntityProcessingService.class)
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .collect(toList());
     }
 }

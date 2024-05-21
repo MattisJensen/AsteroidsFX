@@ -36,7 +36,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
      *
      * @param player The player entity
      */
-    public void shootIfPossible(Player player) {
+    private void shootIfPossible(Player player) {
         if (!this.gameData.getKeys().isDown(GameKeys.SPACE)) {
             return;
         }
@@ -54,7 +54,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
      *
      * @param player The entity to move
      */
-    public void moveEntity(Player player) {
+    private void moveEntity(Player player) {
         if (this.gameData.getKeys().isDown(GameKeys.LEFT)) {
             player.setRotation(player.getRotation() - 5);
         }
@@ -80,7 +80,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
      *
      * @param entity The entity to check
      */
-    public void windowBoundaryInteraction(Entity entity) {
+    private void windowBoundaryInteraction(Entity entity) {
         if (entity.getXCoordinate() < 0) {
             entity.setXCoordinate(1);
         } else if (entity.getXCoordinate() > this.gameData.getDisplayWidth()) {

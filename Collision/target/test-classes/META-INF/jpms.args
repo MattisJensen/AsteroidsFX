@@ -1,4 +1,0 @@
---patch-module
-Collision=_
---add-reads
-Collision=ALL-UNNAMED

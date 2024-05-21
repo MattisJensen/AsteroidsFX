@@ -13,8 +13,8 @@ import java.util.HashMap;
  * CollisionControlSystem: Detects collisions between entities and removes them if they are able to deal damage and take damage.
  */
 public class CollisionControlSystem implements IPostEntityProcessingService {
-    Collection<Entity> entities;
-    HashMap<Entity, Entity> checkedEntities;
+    private Collection<Entity> entities;
+    private HashMap<Entity, Entity> checkedEntities;
 
     @Override
     public void process(GameData gameData, World world) {
@@ -55,7 +55,7 @@ public class CollisionControlSystem implements IPostEntityProcessingService {
      * @param entity2 The second entity.
      * @return True if the entities are colliding, false otherwise.
      */
-    public boolean isCollision(Entity entity1, Entity entity2) {
+    private boolean isCollision(Entity entity1, Entity entity2) {
         // distance between the two entities
         double distance = Math.sqrt(Math.pow(entity2.getCenterXCoordinate() - entity1.getCenterXCoordinate(), 2) + Math.pow(entity2.getCenterYCoordinate() - entity1.getCenterYCoordinate(), 2));
 

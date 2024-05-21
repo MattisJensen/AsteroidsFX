@@ -51,21 +51,21 @@ public class World {
     }
 
     /**
-     * Get all entities in the world of a specific or multiple types
+     * Get all entities of a specific type in the world.
      *
-     * @param entityTypes The types of entities to get
-     * @return A list of entities of the specified types
+     * @param entityType The type of entity to get from the world
+     * @return A list with entities of the specified type
      */
-    public <E extends Entity> List<Entity> getEntities(Class<E>... entityTypes) {
-        List<Entity> r = new ArrayList<>();
-        for (Entity e : getEntities()) {
-            for (Class<E> entityType : entityTypes) {
-                if (entityType.equals(e.getClass())) {
-                    r.add(e);
+    public <E extends Entity> List<Entity> getEntities(Class<E>... entityType) {
+        List<Entity> requestedEntities = new ArrayList<>();
+        for (Entity entity : getEntities()) {
+            for (Class<E> requestedEntityType : entityType) {
+                if (requestedEntityType.equals(entity.getClass())) {
+                    requestedEntities.add(entity);
                 }
             }
         }
-        return r;
+        return requestedEntities;
     }
 
     /**

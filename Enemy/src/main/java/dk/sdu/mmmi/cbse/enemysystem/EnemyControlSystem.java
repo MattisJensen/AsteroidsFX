@@ -36,7 +36,7 @@ public class EnemyControlSystem implements IEntityProcessingService {
      *
      * @param enemy The enemy entity
      */
-    public void shootIfPossible(Enemy enemy) {
+    private void shootIfPossible(Enemy enemy) {
         // If random number is higher than the chance to shoot, the enemy will not shoot
         if (Math.random() > enemy.getChanceToShoot()) {
             return;
@@ -56,7 +56,7 @@ public class EnemyControlSystem implements IEntityProcessingService {
      *
      * @param enemy The entity to move
      */
-    public void moveEntity(Enemy enemy) {
+    private void moveEntity(Enemy enemy) {
         Random random = new Random();
         int randomInt = random.nextInt(1, 20);
 
@@ -84,7 +84,7 @@ public class EnemyControlSystem implements IEntityProcessingService {
      *
      * @param enemy The enemy entity which should rotate
      */
-    public void rotateIfEntityInRange(Enemy enemy) {
+    private void rotateIfEntityInRange(Enemy enemy) {
         for (Entity entity : this.world.getEntities()) {
             if (entity != enemy && distanceBetweenEntities(enemy, entity) <= 16) {
                 enemy.setRotation(enemy.getRotation() + 6);
@@ -111,7 +111,7 @@ public class EnemyControlSystem implements IEntityProcessingService {
      *
      * @param entity The entity to check
      */
-    public void windowBoundaryInteraction(Entity entity) {
+    private void windowBoundaryInteraction(Entity entity) {
         if (entity.getXCoordinate() < 30) {
             entity.setRotation(entity.getRotation() - 8);
             entity.setXCoordinate(30);

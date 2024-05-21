@@ -61,7 +61,7 @@ public class Bullet extends Entity implements ICollidable, IMoveable, IDestroyab
             return;
         }
 
-        // When not handled until here, handle removal
+        // When removal not handled yet, handle removal
         world.removeEntity(entity);
     }
 

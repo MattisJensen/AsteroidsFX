@@ -1,4 +1,3 @@
-
 import dk.sdu.mmmi.cbse.common.bullet.BulletSPI;
 import dk.sdu.mmmi.cbse.common.services.processing.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;

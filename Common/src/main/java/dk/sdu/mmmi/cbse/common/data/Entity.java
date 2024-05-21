@@ -39,7 +39,7 @@ public class Entity implements Serializable {
     /**
      * Sets the width of the entity based on the provided polygon coordinates
      */
-    public void setWidthByPolygon(double... coordinates) {
+    private void setWidthByPolygon(double... coordinates) {
         double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
         for (int i = 0; i < this.polygonCoordinates.length; i += 2) {
             double x = this.polygonCoordinates[i];
@@ -52,7 +52,7 @@ public class Entity implements Serializable {
     /**
      * Sets the height of the entity based on the provided polygon coordinates
      */
-    public void setHeightByPolygon(double... coordinates) {
+    private void setHeightByPolygon(double... coordinates) {
         double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
         for (int i = 1; i < this.polygonCoordinates.length; i += 2) {
             double y = this.polygonCoordinates[i];

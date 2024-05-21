@@ -18,6 +18,7 @@ public class AsteroidControlSystem implements IEntityProcessingService {
         this.gameData = gameData;
         this.world = world;
 
+        // Adds more asteroids if the current amount is less than the desired amount
         addAsteroidsIfNeeded(7);
 
         for (Entity asteroid : this.world.getEntities(Asteroid.class)) {
@@ -48,7 +49,7 @@ public class AsteroidControlSystem implements IEntityProcessingService {
      *
      * @param asteroid The entity to move
      */
-    public void moveEntity(Asteroid asteroid) {
+    private void moveEntity(Asteroid asteroid) {
         double changeX = Math.sin(Math.toRadians(asteroid.getInitialRotation()));
         double changeY = Math.cos(Math.toRadians(asteroid.getInitialRotation()));
 
@@ -63,7 +64,7 @@ public class AsteroidControlSystem implements IEntityProcessingService {
      *
      * @param entity The entity to check
      */
-    public void windowBoundaryInteraction(Entity entity) {
+    private void windowBoundaryInteraction(Entity entity) {
         if (entity.getXCoordinate() + entity.getHeight() < -20
                 || entity.getXCoordinate() - entity.getHeight() > this.gameData.getDisplayWidth() + 20
                 || entity.getYCoordinate() + entity.getHeight() < -20
@@ -77,7 +78,7 @@ public class AsteroidControlSystem implements IEntityProcessingService {
      *
      * @return the created asteroid
      */
-    public Asteroid createAsteroidAtRandomWindowSide() {
+    private Asteroid createAsteroidAtRandomWindowSide() {
         int asteroidSize = 4;
         double movingSpeed = getAsteroidBasedMovingSpeed(asteroidSize);
         double rotationSpeed = getAsteroidBasedRotationSpeed(asteroidSize, movingSpeed);
@@ -129,7 +130,7 @@ public class AsteroidControlSystem implements IEntityProcessingService {
      *
      * @param asteroid the asteroid to split
      */
-    public void splitAsteroidIfNeeded(Asteroid asteroid) {
+    private void splitAsteroidIfNeeded(Asteroid asteroid) {
         if (asteroid.getAsteroidSize() > 1 && asteroid.getLivePoints() <= asteroid.getLivePointsSplittingThreshold()) {
             splitAsteroid(asteroid);
         }
@@ -172,7 +173,7 @@ public class AsteroidControlSystem implements IEntityProcessingService {
      * @param newCoordinates  the new coordinates of the new asteroid
      * @return the new asteroid
      */
-    public Asteroid createNewSplitAsteroid(Asteroid oldAsteroid, int newSize, double movingSpeed, double lifePoints, double rotationSpeed, int offsetDirection, double[] newCoordinates) {
+    private Asteroid createNewSplitAsteroid(Asteroid oldAsteroid, int newSize, double movingSpeed, double lifePoints, double rotationSpeed, int offsetDirection, double[] newCoordinates) {
         // Create new asteroid
         CustomColor asteroidColor = new CustomColor(oldAsteroid.getColor().getRed() + 5 / newSize, oldAsteroid.getColor().getGreen(), oldAsteroid.getColor().getBlue());
         Asteroid newAsteroid = new Asteroid(newSize, movingSpeed, lifePoints, rotationSpeed, asteroidColor, newCoordinates);
