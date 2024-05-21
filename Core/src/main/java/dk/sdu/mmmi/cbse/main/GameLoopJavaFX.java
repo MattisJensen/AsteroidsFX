@@ -64,8 +64,6 @@ public class GameLoopJavaFX {
      * @param window The stage to start the game loop on.
      */
     public void start(Stage window) {
-        Text text = new Text(10, 20, "Destroyed asteroids: 0");
-        text.setFill(Color.rgb(60, 60, 60));
         this.gameWindow.setPrefSize(this.gameData.getDisplayWidth(), this.gameData.getDisplayHeight());
 
         // Create background
