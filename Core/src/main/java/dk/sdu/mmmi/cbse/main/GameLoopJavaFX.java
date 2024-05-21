@@ -20,6 +20,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -147,19 +148,6 @@ public class GameLoopJavaFX {
         removeDeletedEntities();
         addNewEntitiesToWindow();
         updateScoreText();
-    }
-
-    /**
-     * Draws the entities of the game.
-     */
-    private void draw() {
-        for (Entity entity : this.world.getEntities()) {
-            Polygon polygon = this.polygons.get(entity);
-            polygon.setTranslateX(entity.getXCoordinate());
-            polygon.setTranslateY(entity.getYCoordinate());
-            polygon.setRotate(entity.getRotation());
-
-        }
     }
 
     /**
